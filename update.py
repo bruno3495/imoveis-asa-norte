@@ -65,18 +65,26 @@ def main():
         return
 
     # 3) publica
-    status = subprocess.run(["git", "status", "--porcelain"], cwd=HERE,
-                            capture_output=True, text=True).stdout.strip()
-    if not status:
-        print("\nNada mudou desde a ultima publicacao — nada a fazer.")
-        return
     hoje = datetime.date.today().isoformat()
     total = sum(depois.values())
+
+    # detecta se os DADOS mudaram (antes de escrever o heartbeat)
+    data_changed = subprocess.run(
+        ["git", "diff", "--quiet", "--", "index.html", "raw_listings.json"],
+        cwd=HERE).returncode != 0
+
+    # batimento: prova de que a atualizacao rodou com sucesso (o vigia le isso)
+    with open(os.path.join(HERE, "last_run.txt"), "w", encoding="utf-8") as f:
+        f.write(f"{hoje} — {total} anuncios coletados "
+                f"(dfimoveis {depois.get('dfimoveis',0)}, wimoveis {depois.get('wimoveis',0)})\n")
+
     run(["git", "add", "-A"])
-    run(["git", "-c", "commit.gpgsign=false", "commit", "-m",
-         f"Atualiza dados ({hoje}) — {total} anuncios coletados"])
+    msg = (f"Atualiza dados ({hoje}) — {total} anuncios"
+           if data_changed else f"Heartbeat {hoje} (sem mudanca nos anuncios)")
+    run(["git", "-c", "commit.gpgsign=false", "commit", "-m", msg])
     run(["git", "push"])
-    print(f"\nPublicado! O GitHub Pages reconstrói em ~1 min.")
+    print(f"\n{'Publicado (dados novos)' if data_changed else 'Heartbeat registrado'}!"
+          f" O GitHub Pages reconstrói em ~1 min.")
     print("https://bruno3495.github.io/imoveis-asa-norte/")
 
 

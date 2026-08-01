@@ -1,0 +1,33 @@
+name: Vigia de atualização
+
+# Não coleta nada (o wimoveis bloqueia IP de nuvem). Apenas verifica se a
+# atualização LOCAL (Tarefa Agendada do Windows) rodou nos últimos dias.
+# Se ficar muito tempo sem rodar, o job FALHA e o GitHub envia e-mail.
+
+on:
+  schedule:
+    - cron: '0 18 * * 3'      # toda quarta 18:00 UTC (15:00 em Brasília)
+  workflow_dispatch:           # permite testar manualmente
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Conferir frescor da última atualização
+        run: |
+          if [ ! -f last_run.txt ]; then
+            echo "::error::last_run.txt não existe — a atualização automática nunca registrou sucesso."
+            exit 1
+          fi
+          data=$(head -c 10 last_run.txt)
+          echo "Última atualização registrada: $data"
+          dias=$(( ( $(date +%s) - $(date -d "$data" +%s) ) / 86400 ))
+          echo "Faz $dias dia(s)."
+          if [ "$dias" -gt 8 ]; then
+            echo "::error::O painel não é atualizado há $dias dias (limite: 8). Verifique se o PC ligou e se a Tarefa Agendada 'Atualizar Imoveis Asa Norte' rodou (veja update.log)."
+            exit 1
+          fi
+          echo "OK — atualizado dentro do prazo."
