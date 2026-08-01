@@ -46,6 +46,24 @@ Dois anúncios são considerados o mesmo imóvel quando têm **mesma operação 
 mesmas coordenadas (~11 m) + área equivalente (±2 m²)**. Nesse caso o mapa mostra apenas o de **menor preço**,
 e os demais aparecem como “Também anunciado em…”. Esse critério é ajustável na função `dedup()` do `build.py`.
 
+## Atualização automática (agendada)
+
+- **Onde roda:** localmente, via **Tarefa Agendada do Windows** "Atualizar Imoveis Asa Norte"
+  (semanal, segunda 09:00; roda quando o PC ligar, se estiver desligado no horário).
+  Chama `run_update.bat` → `update.py`.
+- **Por que local e não na nuvem:** o `wimoveis.com.br` bloqueia IPs de data center
+  (`HTTP 403`), então GitHub Actions não consegue coletar. Do seu PC (IP residencial) funciona.
+- Cada execução bem-sucedida grava um "batimento" em `last_run.txt` e faz commit/push.
+
+## Monitoramento / alerta por e-mail
+
+O workflow `.github/workflows/monitor.yml` roda no GitHub Actions (quarta 15:00 BRT) e **não coleta nada** —
+só confere se `last_run.txt` foi atualizado nos últimos 8 dias. Se estiver velho (PC não ligou, tarefa falhou),
+o job **falha** e o GitHub envia e-mail automático.
+
+Para receber o alerta, no GitHub: **Settings → Emails** (adicione/verifique seu e-mail) e
+**Settings → Notifications → Actions** (marque e-mail, opção "Only notify for failed workflows").
+
 ## Deploy (hospedar online)
 
 Por ser um HTML único, dá para publicar em qualquer host estático:
