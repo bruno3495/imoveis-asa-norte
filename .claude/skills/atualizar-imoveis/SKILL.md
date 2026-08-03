@@ -1,13 +1,17 @@
 ---
 name: atualizar-imoveis
-description: Atualiza o painel de imóveis da Asa Norte — re-coleta dfimoveis.com.br e wimoveis.com.br, deduplica, regenera o mapa e publica no GitHub Pages. Use quando o Bruno pedir "atualizar imóveis", "rodar de novo", "coletar dados novos", "republicar o painel/mapa" ou similar.
+description: Atualiza o painel de imóveis do DF — re-coleta dfimoveis.com.br e wimoveis.com.br, deduplica, regenera o mapa e publica no GitHub Pages. Use quando o Bruno pedir "atualizar imóveis", "rodar de novo", "coletar dados novos", "republicar o painel/mapa" ou similar.
 ---
 
-# Atualizar o painel de imóveis (Asa Norte)
+# Atualizar o painel de imóveis (DF)
 
-Projeto: coleta imóveis de aluguel e compra (1–3 quartos) na Asa Norte a partir de
+Projeto: coleta apartamentos e casas de aluguel e compra (1–3 quartos) a partir de
 `dfimoveis.com.br` e `wimoveis.com.br`, deduplica (mantendo o menor preço) e publica
 um mapa estilo Airbnb no GitHub Pages.
+
+Regiões (lista `REGIONS` no topo do `scrape.py`): Asa Norte, Asa Sul, Jardim Botânico,
+Sobradinho, Grande Colorado, Guará I, Águas Claras, Taguatinga.
+A coleta completa leva **~30–50 min** — rode em background e acompanhe.
 
 - **Site ao vivo:** https://bruno3495.github.io/imoveis-asa-norte/
 - **Repositório:** https://github.com/bruno3495/imoveis-asa-norte
@@ -23,13 +27,15 @@ um mapa estilo Airbnb no GitHub Pages.
    O `update.py` **aborta antes de publicar** se a coleta de algum portal cair abaixo do
    esperado (sinal de que o site mudou de estrutura).
 
-2. **Se `update.py` abortar por coleta baixa** (um portal quebrou):
+2. **Se `update.py` abortar por coleta suspeita** (piso absoluto ou queda >45% vs
+   `last_counts.json`, sinal de portal quebrado):
    - Baixe uma página do portal afetado e inspecione a estrutura de dados embutida:
      - dfimoveis: bloco `<script type="application/ld+json">` do tipo `ItemList`.
      - wimoveis: `window.__PRELOADED_STATE__` → `listStore.listPostings`.
    - Ajuste o parser correspondente em `scrape.py` (`parse_dfimoveis` / `parse_wimoveis`)
-     ou as URLs de paginação, então rode `python update.py` de novo.
-   - Só publique quando os números voltarem ao patamar normal (centenas por portal).
+     ou os slugs/paginação em `REGIONS`, então rode `python update.py` de novo.
+   - Dá para testar uma região só: `python scrape.py aguas-claras`.
+   - Só publique quando os números voltarem ao patamar normal (milhares por portal).
 
 3. **Confirmar a publicação:**
    - O push dispara o rebuild do Pages (~1 min).

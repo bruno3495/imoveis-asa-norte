@@ -1,8 +1,11 @@
-# Painel de Imóveis — Asa Norte (Brasília/DF)
+# Painel de Imóveis — DF
 
-Mapa estilo Airbnb com imóveis de **aluguel e compra** (1, 2 e 3 quartos) na Asa Norte,
+Mapa estilo Airbnb com **apartamentos e casas** de **aluguel e compra** (1, 2 e 3 quartos),
 coletados de **dfimoveis.com.br** e **wimoveis.com.br**, deduplicados (mantendo o **menor preço**
 quando é o mesmo imóvel).
+
+**Regiões cobertas:** Asa Norte, Asa Sul, Jardim Botânico, Sobradinho, Grande Colorado,
+Guará I, Águas Claras e Taguatinga.
 
 ## Como usar
 
@@ -10,8 +13,10 @@ Abra **`index.html`** no navegador (duplo clique). É um arquivo único e autoss
 (os dados ficam embutidos), então funciona offline — só precisa de internet para carregar o mapa.
 
 - **Ambos / Comprar / Alugar** — filtra por operação (azul = compra, verde = aluguel).
-  No modo **Ambos**, cada quadra mostra **duas bolhas** (compra e aluguel), deslocadas para não sobrepor.
-- **1 / 2 / 3 quartos** — liga/desliga cada opção
+  No modo **Ambos**, cada ponto mostra **duas bolhas** (compra e aluguel), deslocadas para não sobrepor.
+- **Região** — uma das 8 regiões ou todas; ao escolher, o mapa se reenquadra
+- **Apto / Casa** — liga/desliga cada tipo
+- **1q / 2q / 3q** — liga/desliga cada opção
 - **Preço máx** — sliders separados para compra e aluguel
 - **Quadra** — digite p.ex. `SQN 214` (com autocompletar); o mapa centraliza na quadra
 - **Fonte** — DFImóveis, Wimóveis ou todas
@@ -37,8 +42,17 @@ python build.py      # limpa preços, deduplica e gera index.html
 
 ## Como funciona a coleta
 
-- **dfimoveis**: lê o bloco `ld+json` (`ItemList`) de cada página `/{op}/df/brasilia/asa-norte/apartamento?pagina=N`.
-- **wimoveis**: lê o `window.__PRELOADED_STATE__` de `/{op}/imoveis/df/brasilia/asa-norte?bedroom=N,N&page=N`.
+As regiões, com o slug de cada site, ficam na lista `REGIONS` no topo do `scrape.py` —
+é lá que se adiciona/remove região.
+
+- **dfimoveis**: lê o bloco `ld+json` (`ItemList`) de
+  `/{op}/df/{cidade[/bairro]}/{apartamento|casa}/{N}-quartos?pagina=N`.
+- **wimoveis**: lê o `window.__PRELOADED_STATE__` de
+  `/{op}/imoveis/df/{regiao}?bedroom=N,N&page=N`. Como o site às vezes cai no
+  resultado da cidade inteira, cada anúncio é conferido contra os `tokens` de
+  nome de localidade da região (descarta bairro vizinho).
+
+Os dois sites filtram quartos na própria URL, o que reduz muito a paginação.
 
 ## Deduplicação
 

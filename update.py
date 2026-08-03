@@ -14,8 +14,11 @@ Retorna codigo de saida != 0 se algo falhar (util p/ agendamento).
 import subprocess, sys, json, os, datetime, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# limites de sanidade: se cair abaixo disso, provavelmente um site mudou de estrutura
-MIN_ESPERADO = {"dfimoveis": 300, "wimoveis": 300}
+# Saude da coleta: piso absoluto (site fora do ar / parser quebrado) e queda
+# relativa vs. a ultima coleta boa (mudanca de estrutura que derruba parte).
+PISO_ABSOLUTO = {"dfimoveis": 500, "wimoveis": 500}
+QUEDA_MAXIMA = 0.55          # falha se coletar menos de 55% da ultima vez
+HIST = "last_counts.json"
 
 
 def run(cmd, **kw):
@@ -47,15 +50,36 @@ def main():
     depois = count_by_source(os.path.join(HERE, "raw_listings.json"))
 
     # valida saude da coleta (detecta portal quebrado)
-    problemas = [s for s, m in MIN_ESPERADO.items() if depois.get(s, 0) < m]
+    hist_path = os.path.join(HERE, HIST)
+    hist = {}
+    if os.path.exists(hist_path):
+        try:
+            hist = json.load(open(hist_path, encoding="utf-8"))
+        except Exception:
+            hist = {}
+
     print("\n=== coleta por fonte ===")
-    for s in sorted(set(list(antes) + list(depois))):
-        print(f"  {s}: {antes.get(s,0)} -> {depois.get(s,0)}")
+    for s in sorted(set(list(antes) + list(depois) + list(hist))):
+        ref = hist.get(s)
+        alvo = f" (ultima boa: {ref})" if ref else ""
+        print(f"  {s}: {antes.get(s,0)} -> {depois.get(s,0)}{alvo}")
+
+    problemas = []
+    for s, piso in PISO_ABSOLUTO.items():
+        n = depois.get(s, 0)
+        if n < piso:
+            problemas.append(f"{s}: {n} < piso {piso}")
+        elif hist.get(s) and n < hist[s] * QUEDA_MAXIMA:
+            problemas.append(f"{s}: {n} caiu >{int((1-QUEDA_MAXIMA)*100)}% vs {hist[s]}")
     if problemas:
         raise SystemExit(
-            f"ERRO: coleta abaixo do esperado em {problemas} — algum portal pode ter "
-            f"mudado de estrutura. Verifique scrape.py antes de publicar."
+            "ERRO: coleta suspeita — " + "; ".join(problemas) +
+            ". Algum portal pode ter mudado de estrutura; verifique scrape.py "
+            "antes de publicar (rode com --no-push para testar)."
         )
+
+    # coleta saudavel: vira a nova referencia
+    json.dump(depois, open(hist_path, "w", encoding="utf-8"), indent=1)
 
     # 2) gera o mapa
     run([py, "build.py"])
