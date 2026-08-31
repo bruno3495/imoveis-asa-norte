@@ -33,6 +33,9 @@
   .fld{display:flex;flex-direction:column;font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
   .fld input,.fld select{font-size:13px;padding:5px 7px;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-weight:500;text-transform:none;letter-spacing:0}
   .fld input[type=range]{padding:0;border:0;width:120px}
+  .tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .tabs a{padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;color:var(--muted);background:#fff}
+  .tabs a.on{background:var(--venda);color:#fff}
   .legend{display:inline-flex;gap:12px;font-size:12px;color:var(--muted);align-items:center}
   .legend b{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--ink)}
   .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
@@ -78,6 +81,7 @@
   <header>
     <div class="row" style="justify-content:space-between">
       <h1>🏙️ Imóveis DF <small>aluguel & compra · 1 a 3 quartos</small></h1>
+      <nav class="tabs"><a href="index.html" class="on">Mapa</a><a href="analise.html">Análise</a></nav>
       <div class="legend">
         <b><span class="dot" style="background:var(--venda)"></span>Compra (9937)</b>
         <b><span class="dot" style="background:var(--aluguel)"></span>Aluguel (2087)</b>
@@ -144,8 +148,12 @@ DATA.forEach(x=>{
 });
 
 const map = L.map('map',{zoomControl:true, preferCanvas:true}).setView([-15.79,-47.89],11);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-  maxZoom:19, attribution:'© OpenStreetMap © CARTO'}).addTo(map);
+// Base cinza-claro da Esri: nao exige API key. (A CARTO passou a exigir chave e
+// devolvia os tiles com a marca d'agua "API KEY REQUIRED".)
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+  maxZoom:19, attribution:'Tiles © Esri — Esri, DeLorme, NAVTEQ'}).addTo(map);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{
+  maxZoom:19, pane:'overlayPane', opacity:.9}).addTo(map);
 
 function makeCluster(kind){
   const lbl = kind==='v' ? 'compra' : 'aluguel';

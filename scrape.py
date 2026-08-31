@@ -6,7 +6,7 @@ Regioes: Asa Norte, Asa Sul, Jardim Botanico, Sobradinho, Grande Colorado,
          Guara I, Aguas Claras, Taguatinga.
 Saida: raw_listings.json  (lista normalizada, ainda SEM deduplicar)
 """
-import json, re, time, sys, gzip, unicodedata, urllib.request
+import json, re, time, sys, os, gzip, shutil, unicodedata, urllib.request
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/122.0 Safari/537.36")
@@ -55,7 +55,11 @@ def norm(s):
 
 
 # -------------------------------------------------------------------- HTTP
+FALHAS = {"req": 0, "erro": 0}          # contadores p/ a checagem de saude final
+
+
 def fetch(url, tries=3, timeout=30):
+    FALHAS["req"] += 1
     for attempt in range(1, tries + 1):
         try:
             req = urllib.request.Request(url, headers={
@@ -72,7 +76,23 @@ def fetch(url, tries=3, timeout=30):
         except Exception as e:
             print(f"    ! tentativa {attempt}/{tries} falhou ({e})", file=sys.stderr)
             time.sleep(1.5 * attempt)
+    FALHAS["erro"] += 1
     return None
+
+
+def rede_ok(tentativas=6, espera=20):
+    """Confirma que ha internet antes de comecar. A tarefa agendada pode disparar
+    logo depois do boot, com a rede ainda sem DNS — foi o que zerou a coleta de
+    31/08/2026 (getaddrinfo failed em 904 requisicoes)."""
+    alvo = "https://www.dfimoveis.com.br/venda/df/brasilia/asa-norte/apartamento/2-quartos"
+    for i in range(1, tentativas + 1):
+        if fetch(alvo, tries=1, timeout=20):
+            FALHAS["req"] = FALHAS["erro"] = 0      # nao conta o teste
+            return True
+        print(f"  rede indisponivel (tentativa {i}/{tentativas}); aguardando {espera}s...",
+              file=sys.stderr)
+        time.sleep(espera)
+    return False
 
 
 def num(v):
@@ -277,6 +297,11 @@ def keep_bedrooms(x):
 def main():
     only = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None
     regions = [r for r in REGIONS if not only or r["key"] == only]
+
+    if not rede_ok():
+        raise SystemExit("ERRO: sem conexao com os portais — nada foi coletado e "
+                         "raw_listings.json foi preservado intacto.")
+
     listings, seen = [], set()
     t0 = time.time()
     for r in regions:
@@ -289,10 +314,26 @@ def main():
 
     before = len(listings)
     listings = [x for x in listings if keep_bedrooms(x)]
+    taxa_erro = FALHAS["erro"] / max(1, FALHAS["req"])
     print(f"\nColetados: {before} | apos filtro 1-3 quartos: {len(listings)}")
+    print(f"Requisicoes: {FALHAS['req']} | falharam: {FALHAS['erro']} ({taxa_erro:.0%})")
 
-    with open("raw_listings.json", "w", encoding="utf-8") as f:
+    # NUNCA sobrescrever dados bons com uma coleta que deu errado: em 31/08/2026 uma
+    # queda de DNS zerou a coleta e o arquivo virou "[]", levando junto 17.691 anuncios.
+    piso = 200 if only else 2000        # uma regiao so coleta bem menos
+    if len(listings) < piso or taxa_erro > 0.5:
+        raise SystemExit(
+            f"ERRO: coleta falhou ({len(listings)} anuncios, {taxa_erro:.0%} de erro de rede). "
+            f"raw_listings.json foi PRESERVADO como estava. Verifique a conexao e os portais."
+        )
+
+    anterior = "raw_listings.json"
+    if os.path.exists(anterior):        # backup da ultima coleta boa
+        shutil.copyfile(anterior, "raw_listings.bak.json")
+    tmp = anterior + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(listings, f, ensure_ascii=False, separators=(",", ":"))
+    os.replace(tmp, anterior)           # troca atomica
     print(f"-> raw_listings.json salvo ({(time.time()-t0)/60:.1f} min no total)")
 
 
