@@ -198,6 +198,7 @@ function legend(items){
 
 const main = document.getElementById('main');
 const R = D.regioes, K = D.kpi;
+const RLABEL = {}; R.forEach(r => RLABEL[r.key] = r.label);   // chave -> nome da regiao
 
 /* ===== KPIs ===== */
 {
