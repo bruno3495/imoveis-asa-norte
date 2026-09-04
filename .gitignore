@@ -1,4 +1,7 @@
-__pycache__/
+﻿__pycache__/
 *.pyc
 .DS_Store
 update.log
+*.log
+raw_listings.bak.json
+levantamento_alugueis.json

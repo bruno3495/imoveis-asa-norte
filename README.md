@@ -9,8 +9,13 @@ Guará I, Águas Claras e Taguatinga.
 
 ## Como usar
 
-Abra **`index.html`** no navegador (duplo clique). É um arquivo único e autossuficiente
-(os dados ficam embutidos), então funciona offline — só precisa de internet para carregar o mapa.
+Duas páginas, ligadas pelas abas **Mapa | Análise** no topo:
+
+- **`index.html`** — o mapa com os anúncios
+- **`analise.html`** — a análise exploratória (preços, R$/m², rentabilidade, distribuições)
+
+Abra qualquer uma no navegador (duplo clique). São arquivos únicos e autossuficientes
+(os dados ficam embutidos); só precisam de internet para carregar os tiles do mapa.
 
 - **Ambos / Comprar / Alugar** — filtra por operação (azul = compra, verde = aluguel).
   No modo **Ambos**, cada ponto mostra **duas bolhas** (compra e aluguel), deslocadas para não sobrepor.
@@ -37,8 +42,26 @@ python build.py      # limpa preços, deduplica e gera index.html
 |---|---|
 | `scrape.py` | Coleta paginada dos dois sites (usa o JSON estruturado embutido em cada página) |
 | `build.py` | Limpeza de preço, deduplicação e geração do `index.html` |
+| `build_eda.py` | Gera o `analise.html` (EDA) a partir da mesma base limpa |
 | `raw_listings.json` | Dados brutos normalizados (antes da dedup) |
+| `raw_listings.bak.json` | Backup automático da última coleta boa |
 | `index.html` | **O painel** — mapa self-contained |
+| `analise.html` | **A análise** — gráficos, self-contained |
+
+## Duas salvaguardas que já pagaram por si
+
+1. **A coleta nunca sobrescreve dados bons.** Em 31/08/2026 a tarefa agendada rodou
+   logo após o boot, sem DNS: as 904 requisições falharam e o `raw_listings.json`
+   virou `[]`, levando junto 17.691 anúncios (recuperados do git). Agora o `scrape.py`
+   testa a rede antes de começar, aborta se a coleta vier vazia ou com >50% de erro,
+   guarda backup e grava de forma atômica.
+2. **O `update.py` não publica coleta suspeita** — piso absoluto por portal e queda
+   máxima de 45% vs. `last_counts.json`.
+
+> **Tiles do mapa:** a CARTO passou a exigir API key (servia os tiles com a marca
+> d'água "API KEY REQUIRED"). O mapa usa a base cinza-clara da **Esri**, que não
+> pede chave. Se um dia ela também mudar, o ponto de troca é a chamada
+> `L.tileLayer(...)` no template do `build.py`.
 
 ## Como funciona a coleta
 

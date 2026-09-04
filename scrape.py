@@ -45,6 +45,12 @@ REGIONS = [
     {"key": "taguatinga",      "label": "Taguatinga",
      "df": "taguatinga",               "wi": "taguatinga",
      "tokens": ["taguatinga", "vereda"]},
+    {"key": "lago-norte",      "label": "Lago Norte",
+     "df": "brasilia/lago-norte",      "wi": "brasilia/lago-norte",
+     "tokens": ["lago norte"]},
+    {"key": "lago-sul",        "label": "Lago Sul",
+     "df": "brasilia/lago-sul",        "wi": "brasilia/lago-sul",
+     "tokens": ["lago sul"]},
 ]
 
 
@@ -295,8 +301,13 @@ def keep_bedrooms(x):
 
 
 def main():
+    # aceita uma ou varias regioes: "python scrape.py lago-norte,lago-sul --merge"
     only = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None
-    regions = [r for r in REGIONS if not only or r["key"] == only]
+    alvos = set(only.split(",")) if only else None
+    regions = [r for r in REGIONS if not alvos or r["key"] in alvos]
+    if alvos and not regions:
+        raise SystemExit(f"ERRO: regiao desconhecida {sorted(alvos)}. "
+                         f"Validas: {[r['key'] for r in REGIONS]}")
 
     if not rede_ok():
         raise SystemExit("ERRO: sem conexao com os portais — nada foi coletado e "
@@ -320,7 +331,7 @@ def main():
 
     # NUNCA sobrescrever dados bons com uma coleta que deu errado: em 31/08/2026 uma
     # queda de DNS zerou a coleta e o arquivo virou "[]", levando junto 17.691 anuncios.
-    piso = 200 if only else 2000        # uma regiao so coleta bem menos
+    piso = 20 if only else 2000         # uma regiao so coleta bem menos
     if len(listings) < piso or taxa_erro > 0.5:
         raise SystemExit(
             f"ERRO: coleta falhou ({len(listings)} anuncios, {taxa_erro:.0%} de erro de rede). "
@@ -330,10 +341,25 @@ def main():
     anterior = "raw_listings.json"
     if os.path.exists(anterior):        # backup da ultima coleta boa
         shutil.copyfile(anterior, "raw_listings.bak.json")
+
+    # --merge: mantem as demais regioes do arquivo e troca so as recem-coletadas
+    # (permite acrescentar uma regiao nova sem refazer a coleta inteira)
+    if "--merge" in sys.argv and os.path.exists(anterior):
+        chaves = {r["key"] for r in regions}
+        antigos = [x for x in json.load(open(anterior, encoding="utf-8"))
+                   if x.get("region") not in chaves]
+        print(f"merge: {len(antigos)} anuncios de outras regioes preservados "
+              f"+ {len(listings)} coletados agora")
+        listings = antigos + listings
     tmp = anterior + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(listings, f, ensure_ascii=False, separators=(",", ":"))
     os.replace(tmp, anterior)           # troca atomica
+
+    # data real da coleta — o painel mostra isso, nao a data em que foi gerado
+    import datetime
+    json.dump({"coletado_em": datetime.date.today().isoformat(), "n": len(listings)},
+              open("raw_meta.json", "w", encoding="utf-8"), ensure_ascii=False)
     print(f"-> raw_listings.json salvo ({(time.time()-t0)/60:.1f} min no total)")
 
 

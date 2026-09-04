@@ -3,10 +3,11 @@
 Gera analise.html — analise exploratoria (EDA) dos imoveis coletados.
 Usa a mesma limpeza do build.py (preco, geografia, outliers, dedup).
 """
-import json, statistics as st, datetime
+import json, os, statistics as st, datetime
 from collections import Counter, defaultdict
 from scrape import REGIONS
-from build import valid_price, valid_geo, drop_outliers, dedup
+from build import (valid_price, valid_geo, drop_outliers, dedup,
+                   extract_quadra, snap_para_quadra)
 
 AREA_MIN, AREA_MAX = 20, 2000        # area plausivel p/ calcular R$/m2
 
@@ -15,10 +16,22 @@ def med(v):
     return st.median(v) if v else None
 
 
+def m2_de(items, kind=None):
+    """R$/m² dos itens, opcionalmente so de um tipo (casa distorce: a area inclui lote)."""
+    return [x["price"] / x["area"] for x in items
+            if x.get("area") and AREA_MIN < x["area"] < AREA_MAX
+            and (kind is None or x["kind"] == kind)]
+
+
 def carregar():
+    """Mesmo pipeline do build.py — inclusive o reposicionamento pelo endereco,
+    para que os centros de quadra do mapa de calor batam com os do mapa."""
     raw = json.load(open("raw_listings.json", encoding="utf-8"))
     d = [x for x in raw if valid_price(x) and valid_geo(x)]
     d, _ = drop_outliers(d)
+    for x in d:
+        x["quadra"] = extract_quadra(x)
+    snap_para_quadra(d)
     d, dups = dedup(d)
     return raw, d, dups
 
@@ -49,10 +62,7 @@ def main():
     venda   = [x for x in d if x["operation"] == "venda"]
     aluguel = [x for x in d if x["operation"] == "aluguel"]
 
-    def m2(items, kind=None):
-        return [x["price"] / x["area"] for x in items
-                if x.get("area") and AREA_MIN < x["area"] < AREA_MAX
-                and (kind is None or x["kind"] == kind)]
+    m2 = m2_de
 
     regioes = []
     for r in REGIONS:
@@ -83,8 +93,42 @@ def main():
             quartos.append({"kind": kind, "b": b, "n_venda": len(v), "n_aluguel": len(a),
                             "med_venda": med(v), "med_aluguel": med(a)})
 
+    # data da COLETA (nao a de geracao da pagina): so assim o rodape nao promete
+    # dados de hoje quando o build roda sobre uma coleta antiga
+    coletado = None
+    if os.path.exists("raw_meta.json"):
+        try:
+            coletado = json.load(open("raw_meta.json", encoding="utf-8")).get("coletado_em")
+        except Exception:
+            coletado = None
+    if not coletado:
+        coletado = datetime.date.fromtimestamp(
+            os.path.getmtime("raw_listings.json")).isoformat()
+
+    # --- agregado por quadra, para o mapa de calor ---
+    por_q = defaultdict(list)
+    for x in d:
+        if x.get("quadra") and any(c.isdigit() for c in x["quadra"]):
+            por_q[(x["quadra"], x["region"])].append(x)
+    quadras = []
+    for (q, reg), g in por_q.items():
+        if len(g) < 3:                       # amostra minima p/ uma cor honesta
+            continue
+        v = [x for x in g if x["operation"] == "venda"]
+        m2q = med(m2_de(v, "apartamento"))
+        quadras.append({
+            "q": q, "r": reg, "n": len(g),
+            "lat": round(st.median([x["lat"] for x in g]), 5),
+            "lon": round(st.median([x["lon"] for x in g]), 5),
+            "m2": round(m2q) if m2q else None,
+            "med": round(med([x["price"] for x in v])) if v else None,
+            "nv": len(v),
+        })
+    quadras.sort(key=lambda z: -(z["m2"] or 0))
+
     dados = {
-        "gerado": datetime.date.today().isoformat(),
+        "gerado": coletado,
+        "quadras": quadras,
         "kpi": {
             "total": len(d), "venda": len(venda), "aluguel": len(aluguel),
             "med_venda": med([x["price"] for x in venda]),
@@ -104,7 +148,6 @@ def main():
 
     html = TEMPLATE.replace("__DADOS__", json.dumps(dados, ensure_ascii=False))
     open("analise.html", "w", encoding="utf-8").write(html)
-    import os
     print(f"-> analise.html gerado ({os.path.getsize('analise.html')/1024:.0f} KB)")
     print(f"   {len(d)} imoveis | {len(venda)} venda | {len(aluguel)} aluguel")
 
@@ -115,6 +158,8 @@ TEMPLATE = r"""<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Análise · Imóveis DF</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   color-scheme: light;
@@ -192,6 +237,22 @@ tbody tr:hover{background:var(--plane)}
 .nota{font-size:12px;color:var(--text-secondary);background:var(--plane);border-left:3px solid var(--warn);
   padding:9px 12px;border-radius:0 8px 8px 0;margin-top:14px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#heat{height:460px;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--plane)}
+.heat-lab{background:transparent;border:0;box-shadow:none;font-weight:800;font-size:11px;
+  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);text-align:center;white-space:nowrap}
+.scale{display:flex;align-items:center;gap:9px;margin:12px 0 4px;flex-wrap:wrap;font-size:12px}
+.scale .steps{display:flex;border-radius:5px;overflow:hidden;border:1px solid var(--border)}
+.scale .steps i{width:34px;height:13px;display:block}
+.scale b{font-weight:600;color:var(--text-secondary)}
+.seg2{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.seg2 button{border:0;background:var(--surface-1);padding:6px 13px;font-size:12.5px;font-weight:700;
+  cursor:pointer;color:var(--text-secondary)}
+.seg2 button.on{background:var(--venda);color:#fff}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:7px;margin-top:12px}
+.cell{border-radius:9px;padding:10px 11px;color:#fff;min-height:64px;display:flex;
+  flex-direction:column;justify-content:space-between}
+.cell .cn{font-size:11.5px;font-weight:700;opacity:.95;line-height:1.2}
+.cell .cv{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
 @media(max-width:820px){ .two{grid-template-columns:1fr} .bar-row{grid-template-columns:96px 1fr} }
 footer{max-width:1180px;margin:0 auto;padding:0 20px 30px;font-size:12px;color:var(--muted)}
 </style>
@@ -362,6 +423,93 @@ const R = D.regioes, K = D.kpi;
   s.appendChild(barChart(rows,{tipFmt:r=>r.label+': '+r.v.toFixed(1).replace('.',',')+'% ao ano<br>base: '+num(r.n)+' anúncios de aluguel'}));
   s.appendChild(el('div','nota','* Regiões com menos de 30 anúncios de aluguel (barra clara) têm amostra pequena — trate o número como indicativo. Grande Colorado, por exemplo, tem só '+num(R.find(r=>r.key==='grande-colorado').n_aluguel)+' anúncios de locação.'));
   main.appendChild(s);
+}
+
+/* ===== mapa de calor por quadra + faixa por regiao ===== */
+{
+  // rampa sequencial de um hue so: claro = mais barato, escuro = mais caro
+  const RAMPA = ['#cde2fb','#9ec5f4','#6da7ec','#3987e5','#256abf','#184f95','#0d366b'];
+  const s = section('Mapa de calor — quanto custa cada quadra',
+    'Cada bolha é uma quadra (mínimo de 3 anúncios). Quanto mais escura, mais cara. '+
+    'As cores são divididas por quantis, então cada faixa tem mais ou menos o mesmo número de quadras.');
+
+  const seg = el('div','seg2');
+  [['m2','R$/m² (apartamentos)'],['med','Preço mediano de venda']].forEach(([k,nome],i)=>{
+    const b=el('button',i===0?'on':null,nome); b.dataset.k=k; seg.appendChild(b);
+  });
+  s.appendChild(seg);
+  const escala = el('div','scale');
+  s.appendChild(escala);
+  const box = el('div'); box.id='heat'; s.appendChild(box);
+  s.appendChild(el('div','nota','Em R$/m² só entram apartamentos: em casa a área anunciada costuma incluir o lote, o que faria uma quadra de casas parecer barata sem ser. Na opção "preço mediano" entram todos os tipos — ali uma quadra de casas grandes aparece cara por ser casa, não por ser cara o m².'));
+  main.appendChild(s);
+
+  const map = L.map('heat',{scrollWheelZoom:false}).setView([-15.79,-47.89],11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19, attribution:'© OpenStreetMap', opacity:.55}).addTo(map);
+  const camada = L.layerGroup().addTo(map);
+
+  function quantis(vals,n){
+    const v=vals.slice().sort((a,b)=>a-b), cortes=[];
+    for(let i=1;i<n;i++) cortes.push(v[Math.floor(v.length*i/n)]);
+    return cortes;
+  }
+  function desenhar(metrica){
+    camada.clearLayers();
+    const dados = D.quadras.filter(q=>q[metrica]!=null);
+    const cortes = quantis(dados.map(q=>q[metrica]), RAMPA.length);
+    const cor = v => RAMPA[cortes.filter(c=>v>=c).length];
+    const fmt = v => metrica==='m2' ? brl(v)+'/m²' : kbrl(v);
+    const maxN = Math.max(...dados.map(q=>q.n));
+    dados.forEach(q=>{
+      const raio = 7 + 13*Math.sqrt(q.n/maxN);
+      const c = L.circleMarker([q.lat,q.lon],{
+        radius:raio, fillColor:cor(q[metrica]), fillOpacity:.87,
+        color:'#fff', weight:1.5
+      });
+      c.bindTooltip('<b>'+q.q+'</b> · '+(RLABEL[q.r]||'')+'<br>'+
+        (q.m2!=null?'R$/m² (apto): '+brl(q.m2)+'<br>':'')+
+        (q.med!=null?'Venda mediana: '+kbrl(q.med)+'<br>':'')+
+        q.n+' anúncios',{sticky:true});
+      camada.addLayer(c);
+    });
+    // legenda: faixas de valor da rampa
+    escala.innerHTML='';
+    escala.appendChild(el('b',null,'mais barato'));
+    const steps=el('div','steps');
+    RAMPA.forEach(c=>{const i=el('i'); i.style.background=c; steps.appendChild(i);});
+    escala.appendChild(steps);
+    escala.appendChild(el('b',null,'mais caro'));
+    escala.appendChild(el('b',null,'· '+fmt(Math.min(...dados.map(q=>q[metrica])))+
+      ' a '+fmt(Math.max(...dados.map(q=>q[metrica])))+' · '+dados.length+' quadras'));
+    if(dados.length){
+      map.fitBounds(L.latLngBounds(dados.map(q=>[q.lat,q.lon])).pad(0.06));
+    }
+  }
+  seg.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    [...seg.children].forEach(c=>c.classList.toggle('on',c===b));
+    desenhar(b.dataset.k);
+  });
+  desenhar('m2');
+  setTimeout(()=>map.invalidateSize(),200);
+
+  /* faixa por regiao (mesma rampa) */
+  const s2 = section('Mapa de calor por região','Mediana do m² de apartamentos à venda em cada região.');
+  const comM2 = R.filter(r=>r.m2_venda!=null).sort((a,b)=>b.m2_venda-a.m2_venda);
+  const cortesR = quantis(comM2.map(r=>r.m2_venda), RAMPA.length);
+  const strip = el('div','strip');
+  comM2.forEach(r=>{
+    const c = el('div','cell');
+    c.style.background = RAMPA[cortesR.filter(v=>r.m2_venda>=v).length];
+    c.appendChild(el('div','cn', r.label));
+    c.appendChild(el('div','cv', brl(r.m2_venda)));
+    bindTip(c, r.label+'<br>R$/m² (apto, venda): '+brl(r.m2_venda)+
+      '<br>venda mediana: '+kbrl(r.med_venda)+'<br>'+num(r.n)+' anúncios');
+    strip.appendChild(c);
+  });
+  s2.appendChild(strip);
+  main.appendChild(s2);
 }
 
 /* ===== distribuicoes ===== */

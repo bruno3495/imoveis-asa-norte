@@ -71,7 +71,10 @@ def km(lat1, lon1, lat2, lon2):
 # distribuicao real de cada uma: o Setor Habitacional Jardim Botanico e Sobradinho
 # (com Fercal) sao espalhados; Grande Colorado e Guara I sao compactos.
 RAIO_REGIAO = {"jardim-botanico": 15, "sobradinho": 18,
-               "aguas-claras": 10, "taguatinga": 10, "asa-sul": 9}
+               "aguas-claras": 10, "taguatinga": 10, "asa-sul": 9,
+               # os lagos sao faixas alongadas (Mansoes do Lago Norte, Taquari):
+               # p95 fica em ~12 km, entao 8 km cortava anuncio legitimo
+               "lago-norte": 13, "lago-sul": 13}
 RAIO_PADRAO = 8
 
 def drop_outliers(items):
@@ -93,6 +96,49 @@ def drop_outliers(items):
             else:
                 removidos[reg] += 1
     return out, dict(removidos)
+
+
+# Distancia acima da qual a coordenada do anuncio e considerada errada e ele e
+# reposicionado no centro da propria quadra (o endereco e mais confiavel que o
+# geocode do portal: achamos anuncios do SGAN 914 marcados a 3,5 e 8,9 km dali).
+SNAP_KM = 1.2
+SNAP_MIN_AMOSTRA = 4        # so confia no centro de quadras com anuncios suficientes
+
+
+def snap_para_quadra(items):
+    """Reposiciona pelo endereco. Para cada quadra COM NUMERO (SQN 214, SGAN 914),
+    calcula o centro pela mediana das coordenadas — robusta, porque a maioria dos
+    anuncios da quadra esta no lugar certo — e puxa para la os que estao longe.
+    Setores sem numero (SHTN, SHN) sao grandes demais e ficam de fora."""
+    import statistics
+    por_quadra = defaultdict(list)
+    for x in items:
+        q = x.get("quadra")
+        if q and any(ch.isdigit() for ch in q):
+            por_quadra[q].append(x)
+
+    centros = {}
+    for q, grupo in por_quadra.items():
+        if len(grupo) < SNAP_MIN_AMOSTRA:
+            continue
+        la = statistics.median([g["lat"] for g in grupo])
+        lo = statistics.median([g["lon"] for g in grupo])
+        # refina: recalcula usando so quem ja esta perto, para o centro nao ser
+        # puxado quando ha muitos anuncios errados na mesma quadra
+        perto = [g for g in grupo if km(la, lo, g["lat"], g["lon"]) <= SNAP_KM]
+        if len(perto) >= SNAP_MIN_AMOSTRA:
+            la = statistics.median([g["lat"] for g in perto])
+            lo = statistics.median([g["lon"] for g in perto])
+        centros[q] = (la, lo)
+
+    movidos = 0
+    for x in items:
+        c = centros.get(x.get("quadra"))
+        if c and km(c[0], c[1], x["lat"], x["lon"]) > SNAP_KM:
+            x["lat"], x["lon"] = c
+            x["snap"] = True
+            movidos += 1
+    return movidos, len(centros)
 
 
 def dedup(items):
@@ -179,15 +225,18 @@ def main():
     com_preco = [x for x in raw if valid_price(x)]
     no_df = [x for x in com_preco if valid_geo(x)]
     clean, fora = drop_outliers(no_df)
-    deduped, dups = dedup(clean)
-    for x in deduped:
+    for x in clean:
         x["quadra"] = extract_quadra(x)
+    # reposiciona pelo endereco ANTES de deduplicar (a dedup compara coordenadas)
+    movidos, n_quadras = snap_para_quadra(clean)
+    deduped, dups = dedup(clean)
 
     print(f"brutos: {len(raw)}")
     print(f"apos limpeza de preco: {len(com_preco)}  (removidos {len(raw)-len(com_preco)})")
     print(f"apos filtro geografico: {len(no_df)}  (removidos {len(com_preco)-len(no_df)} fora do DF)")
     if fora:
         print(f"outliers de regiao removidos: {sum(fora.values())} {fora}")
+    print(f"reposicionados pelo endereco: {movidos} ({n_quadras} quadras mapeadas)")
     print(f"apos dedup: {len(deduped)}  (fundidos {dups} duplicados)")
     porreg = defaultdict(int)
     for x in deduped:
@@ -235,7 +284,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
   .fld{display:flex;flex-direction:column;font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
   .fld input,.fld select{font-size:13px;padding:5px 7px;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-weight:500;text-transform:none;letter-spacing:0}
-  .fld input[type=range]{padding:0;border:0;width:120px}
+  .fld input[type=range]{padding:0;border:0;width:100%;margin-top:3px}
+  .pair{display:flex;gap:4px}
+  .pair input{width:78px;font-variant-numeric:tabular-nums}
+  .pair input::-webkit-outer-spin-button,.pair input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .pair input[type=number]{-moz-appearance:textfield}
+  #limpar{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 11px;
+          font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+  #limpar:hover{background:var(--bg);color:var(--ink)}
   .tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
   .tabs a{padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;color:var(--muted);background:#fff}
   .tabs a.on{background:var(--venda);color:#fff}
@@ -307,12 +363,24 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <span class="chip on" data-bed="2">2q</span>
         <span class="chip on" data-bed="3">3q</span>
       </div>
-      <label class="fld">Preço máx (compra)
-        <input type="range" id="maxVenda" min="0" max="0" step="50000">
-        <span id="maxVendaLbl" style="color:var(--ink);text-transform:none"></span></label>
-      <label class="fld">Preço máx (aluguel)
-        <input type="range" id="maxAluguel" min="0" max="0" step="500">
-        <span id="maxAluguelLbl" style="color:var(--ink);text-transform:none"></span></label>
+      <div class="fld">Preço compra (R$)
+        <div class="pair">
+          <input type="number" id="vMin" placeholder="mín" min="0" step="10000">
+          <input type="number" id="vMax" placeholder="máx" min="0" step="10000">
+        </div>
+        <input type="range" id="maxVenda" min="0" max="0" step="10000"></div>
+      <div class="fld">Aluguel (R$/mês)
+        <div class="pair">
+          <input type="number" id="aMin" placeholder="mín" min="0" step="100">
+          <input type="number" id="aMax" placeholder="máx" min="0" step="100">
+        </div>
+        <input type="range" id="maxAluguel" min="0" max="0" step="100"></div>
+      <div class="fld">Área (m²)
+        <div class="pair">
+          <input type="number" id="arMin" placeholder="mín" min="0" step="5">
+          <input type="number" id="arMax" placeholder="máx" min="0" step="5">
+        </div>
+        <input type="range" id="maxArea" min="0" max="0" step="5"></div>
       <label class="fld">Quadra
         <input id="quadra" list="quadras" placeholder="ex: SQN 214" autocomplete="off" style="width:105px">
         <datalist id="quadras"></datalist></label>
@@ -320,6 +388,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <select id="src"><option value="">Todas</option>
           <option value="d">DFImóveis</option>
           <option value="w">Wimóveis</option></select></label>
+      <button id="limpar" type="button">Limpar filtros</button>
       <span id="count"></span>
     </div>
   </header>
@@ -351,12 +420,11 @@ DATA.forEach(x=>{
 });
 
 const map = L.map('map',{zoomControl:true, preferCanvas:true}).setView([-15.79,-47.89],11);
-// Base cinza-claro da Esri: nao exige API key. (A CARTO passou a exigir chave e
-// devolvia os tiles com a marca d'agua "API KEY REQUIRED".)
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
-  maxZoom:19, attribution:'Tiles © Esri — Esri, DeLorme, NAVTEQ'}).addTo(map);
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{
-  maxZoom:19, pane:'overlayPane', opacity:.9}).addTo(map);
+// OpenStreetMap: sem API key e com cobertura ate o zoom 19 aqui no DF.
+// (A CARTO passou a exigir chave — servia tiles com marca d'agua; a base cinza da
+// Esri nao tem tile em zoom alto no Brasil e ficava em branco ao aproximar.)
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
 
 function makeCluster(kind){
   const lbl = kind==='v' ? 'compra' : 'aluguel';
@@ -412,25 +480,53 @@ function makeMarker(x){
 }
 
 const state={op:'ambos',beds:new Set([1,2,3]),kinds:new Set(['apartamento','casa','outro']),
-             src:'',regiao:'',quadra:'',maxV:Infinity,maxA:Infinity};
+             src:'',regiao:'',quadra:'',
+             minV:0,maxV:Infinity, minA:0,maxA:Infinity, minAr:0,maxAr:Infinity};
 
 document.getElementById('regiao').innerHTML =
   '<option value="">Todas as regiões</option>' +
   REGIOES.map(r=>'<option value="'+r.key+'">'+r.label+' ('+r.n.toLocaleString('pt-BR')+')</option>').join('');
 document.getElementById('quadras').innerHTML = QUADRAS.map(q=>'<option value="'+q+'">').join('');
 
-// slider vai ate o percentil 99 (o topo vira "sem limite"), senao um punhado de
-// anuncios caros deixaria a faixa util espremida no comeco da barra
-function pct99(op){
-  const v = DATA.filter(x=>x.o===op).map(x=>x.p).sort((a,b)=>a-b);
+// Faixas ate o percentil 99: um punhado de anuncios caros espremeria a faixa util
+// no comeco da barra. Acima do topo o filtro vira "sem limite".
+function pct99(arr){
+  const v = arr.slice().sort((a,b)=>a-b);
   return v.length ? v[Math.floor(v.length*0.99)] : 0;
 }
-const rV=document.getElementById('maxVenda'), rA=document.getElementById('maxAluguel');
-const lblV=document.getElementById('maxVendaLbl'), lblA=document.getElementById('maxAluguelLbl');
-rV.max=Math.ceil(pct99('v')/50000)*50000; rV.value=rV.max; state.maxV=Infinity;
-rA.max=Math.ceil(pct99('a')/500)*500;     rA.value=rA.max; state.maxA=Infinity;
-lblV.textContent='sem limite';
-lblA.textContent='sem limite';
+const $ = id => document.getElementById(id);
+const rV=$('maxVenda'), rA=$('maxAluguel'), rAr=$('maxArea');
+const TOPO = {
+  v : Math.ceil(pct99(DATA.filter(x=>x.o==='v').map(x=>x.p))/10000)*10000,
+  a : Math.ceil(pct99(DATA.filter(x=>x.o==='a').map(x=>x.p))/100)*100,
+  ar: Math.ceil(pct99(DATA.filter(x=>x.ar).map(x=>x.ar))/5)*5,
+};
+rV.max=TOPO.v;  rV.value=TOPO.v;
+rA.max=TOPO.a;  rA.value=TOPO.a;
+rAr.max=TOPO.ar; rAr.value=TOPO.ar;
+
+// slider e campo "max" andam juntos; o campo aceita valor acima do topo do slider
+function ligaFaixa(slider, campoMin, campoMax, chaveMin, chaveMax, topo){
+  const cMin=$(campoMin), cMax=$(campoMax);
+  cMin.placeholder='mín'; cMax.placeholder='máx';
+  slider.addEventListener('input',()=>{
+    const v=+slider.value;
+    state[chaveMax] = v>=topo ? Infinity : v;
+    cMax.value = v>=topo ? '' : v;
+    render();
+  });
+  const doCampo=()=>{
+    state[chaveMin] = cMin.value==='' ? 0 : +cMin.value;
+    state[chaveMax] = cMax.value==='' ? Infinity : +cMax.value;
+    slider.value = Math.min(topo, cMax.value==='' ? topo : +cMax.value);
+    render();
+  };
+  cMin.addEventListener('input',doCampo);
+  cMax.addEventListener('input',doCampo);
+}
+ligaFaixa(rV, 'vMin','vMax','minV','maxV', TOPO.v);
+ligaFaixa(rA, 'aMin','aMax','minA','maxA', TOPO.a);
+ligaFaixa(rAr,'arMin','arMax','minAr','maxAr', TOPO.ar);
 
 function passes(x){
   if(state.op!=='ambos' && (state.op==='venda'?'v':'a')!==x.o) return false;
@@ -439,8 +535,12 @@ function passes(x){
   if(state.regiao && x.r!==state.regiao) return false;
   if(state.src && x.s!==state.src) return false;
   if(state.quadra && !((x.q||'').toUpperCase().includes(state.quadra))) return false;
-  if(x.o==='v' && x.p>state.maxV) return false;
-  if(x.o==='a' && x.p>state.maxA) return false;
+  if(x.o==='v' && (x.p<state.minV || x.p>state.maxV)) return false;
+  if(x.o==='a' && (x.p<state.minA || x.p>state.maxA)) return false;
+  if(state.minAr>0 || state.maxAr<Infinity){
+    if(!x.ar) return false;                      // sem área informada
+    if(x.ar<state.minAr || x.ar>state.maxAr) return false;
+  }
   return true;
 }
 function render(fit){
@@ -489,17 +589,15 @@ document.getElementById('quadra').addEventListener('input',e=>{
   state.quadra=e.target.value.trim().toUpperCase();
   render(!!state.quadra);
 });
-rV.addEventListener('input',e=>{
-  const topo = +e.target.value >= +rV.max;
-  state.maxV = topo ? Infinity : +e.target.value;
-  lblV.textContent = topo ? 'sem limite' : BRL(state.maxV);
-  render();
-});
-rA.addEventListener('input',e=>{
-  const topo = +e.target.value >= +rA.max;
-  state.maxA = topo ? Infinity : +e.target.value;
-  lblA.textContent = topo ? 'sem limite' : BRL(state.maxA)+'/mês';
-  render();
+$('limpar').addEventListener('click',()=>{
+  ['vMin','vMax','aMin','aMax','arMin','arMax','quadra'].forEach(id=>$(id).value='');
+  $('regiao').value=''; $('src').value='';
+  rV.value=TOPO.v; rA.value=TOPO.a; rAr.value=TOPO.ar;
+  Object.assign(state,{regiao:'',src:'',quadra:'',
+    minV:0,maxV:Infinity,minA:0,maxA:Infinity,minAr:0,maxAr:Infinity,
+    beds:new Set([1,2,3]),kinds:new Set(['apartamento','casa','outro'])});
+  document.querySelectorAll('#bedChips .chip,#kindChips .chip').forEach(c=>c.classList.add('on'));
+  render(true);
 });
 
 applySplit();
