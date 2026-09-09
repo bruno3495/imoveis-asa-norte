@@ -7,7 +7,7 @@ import json, os, statistics as st, datetime
 from collections import Counter, defaultdict
 from scrape import REGIONS
 from build import (valid_price, valid_geo, drop_outliers, dedup,
-                   extract_quadra, snap_para_quadra)
+                   extract_quadra, extract_bloco, snap_para_quadra)
 
 AREA_MIN, AREA_MAX = 20, 2000        # area plausivel p/ calcular R$/m2
 
@@ -31,6 +31,7 @@ def carregar():
     d, _ = drop_outliers(d)
     for x in d:
         x["quadra"] = extract_quadra(x)
+        x["bloco"] = extract_bloco(x)
     snap_para_quadra(d)
     d, dups = dedup(d)
     return raw, d, dups
@@ -449,6 +450,7 @@ const RLABEL = {}; R.forEach(r => RLABEL[r.key] = r.label);   // chave -> nome d
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     {maxZoom:19, attribution:'© OpenStreetMap', opacity:.55}).addTo(map);
   const camada = L.layerGroup().addTo(map);
+  let limites = null;
 
   function quantis(vals,n){
     const v=vals.slice().sort((a,b)=>a-b), cortes=[];
@@ -484,7 +486,8 @@ const RLABEL = {}; R.forEach(r => RLABEL[r.key] = r.label);   // chave -> nome d
     escala.appendChild(el('b',null,'· '+fmt(Math.min(...dados.map(q=>q[metrica])))+
       ' a '+fmt(Math.max(...dados.map(q=>q[metrica])))+' · '+dados.length+' quadras'));
     if(dados.length){
-      map.fitBounds(L.latLngBounds(dados.map(q=>[q.lat,q.lon])).pad(0.06));
+      limites = L.latLngBounds(dados.map(q=>[q.lat,q.lon])).pad(0.06);
+      map.fitBounds(limites);
     }
   }
   seg.addEventListener('click',e=>{
@@ -493,7 +496,20 @@ const RLABEL = {}; R.forEach(r => RLABEL[r.key] = r.label);   // chave -> nome d
     desenhar(b.dataset.k);
   });
   desenhar('m2');
-  setTimeout(()=>map.invalidateSize(),200);
+  // O container comeca fora da tela e sem altura util: sem reavaliar o tamanho
+  // antes de enquadrar, o Leaflet abria o mapa no mundo inteiro.
+  function reajustar(){
+    map.invalidateSize();
+    if(limites) map.fitBounds(limites);
+  }
+  setTimeout(reajustar, 300);
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es=>{
+      if(es.some(e=>e.isIntersecting)){ reajustar(); io.disconnect(); }
+    },{threshold:.15});
+    io.observe(box);
+  }
+  window.addEventListener('resize', reajustar);
 
   /* faixa por regiao (mesma rampa) */
   const s2 = section('Mapa de calor por região','Mediana do m² de apartamentos à venda em cada região.');

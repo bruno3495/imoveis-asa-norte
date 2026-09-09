@@ -26,6 +26,18 @@ _RX_SEC = re.compile(r'\b' + _PREF + r'\b', re.I)
 REGION_LABEL = {r["key"]: r["label"] for r in REGIONS}
 
 
+_RX_BLOCO = re.compile(r'\bbl?o?c?o?\.?\s*([A-Z0-9]{1,3})\b', re.I)
+
+
+def extract_bloco(rec):
+    """'Bloco C' -> 'C'. Separa apartamentos distintos dentro da mesma quadra."""
+    for src in (rec.get("address") or "", rec.get("title") or ""):
+        m = _RX_BLOCO.search(src)
+        if m:
+            return m.group(1).upper()
+    return None
+
+
 def extract_quadra(rec):
     """Ex.: 'SQN 214'. Numero quando existir; senao so o setor."""
     for src in (rec.get("address") or "", rec.get("title") or ""):
@@ -143,17 +155,33 @@ def snap_para_quadra(items):
 
 def dedup(items):
     """Agrupa duplicatas do mesmo imovel e mantem o de menor preco.
-    Chave: operacao + tipo + quartos + coords (~11 m) + area (±2 m2)."""
+
+    Chave: operacao + tipo + quartos + area (±2 m2) + LUGAR. Para o lugar usa a
+    quadra quando ela e conhecida, e nao a coordenada: os dois portais publicam o
+    mesmo imovel com geocode ligeiramente diferente, e por coordenada o anuncio
+    escapava duplicado (o mesmo apto da CRS 514 aparecia duas vezes por R$ 2.100).
+    Sem quadra, cai de volta na coordenada arredondada (~11 m).
+    """
     groups = defaultdict(list)
     for x in items:
         area = x.get("area") or 0
+        q, bl = x.get("quadra"), x.get("bloco")
+        if q and bl:
+            # quadra + bloco identifica o predio: fusao segura
+            lugar = ("qb", q, bl)
+        elif q:
+            # sem bloco, so funde se o preco tambem bater (~2%): dois anuncios do
+            # mesmo tamanho na mesma quadra por precos diferentes costumam ser
+            # apartamentos diferentes, e apagar um deles esconde oferta real
+            lugar = ("qp", q, round(x["price"] / max(50.0, x["price"] * 0.02)))
+        else:
+            lugar = ("xy", round(x["lat"], 4), round(x["lon"], 4))
         key = (
             x["operation"],
             x.get("kind"),
             int(x["bedrooms"]),
-            round(x["lat"], 4),
-            round(x["lon"], 4),
             round(area / 2.0) * 2,
+            lugar,
         )
         groups[key].append(x)
 
@@ -227,6 +255,7 @@ def main():
     clean, fora = drop_outliers(no_df)
     for x in clean:
         x["quadra"] = extract_quadra(x)
+        x["bloco"] = extract_bloco(x)
     # reposiciona pelo endereco ANTES de deduplicar (a dedup compara coordenadas)
     movidos, n_quadras = snap_para_quadra(clean)
     deduped, dups = dedup(clean)
