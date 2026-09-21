@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imóveis da UnB — monitor</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f7f5;--card:#fff;--ink:#111;--mut:#666;--line:#e4e4de;--ac:#2a78d6;--ok:#0ca30c}
+@media(prefers-color-scheme:dark){:root{--bg:#111;--card:#1a1a19;--ink:#fff;--mut:#aaa;--line:#2c2c2a;--ac:#3987e5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:22px}
+.wrap{max-width:1080px;margin:0 auto}
+nav{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:16px}
+nav a{padding:7px 15px;font-size:13px;font-weight:700;text-decoration:none;color:var(--mut);background:var(--card)}
+nav a.on{background:var(--ac);color:#fff}
+h1{font-size:22px;margin:0 0 4px} .sub{color:var(--mut);font-size:13.5px;margin:0 0 18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.pos{color:var(--ok);font-weight:700} td.neg{color:#d03b3b}
+a{color:var(--ac);text-decoration:none;font-weight:600}
+.s{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;margin-left:6px;color:#fff}
+.s.novo{background:var(--ac)} .s.bom{background:var(--ok)}
+.sub2{font-size:11.5px;color:var(--mut);font-weight:400;margin-top:2px}
+.nota{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0}
+</style></head><body><div class="wrap">
+<nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a>
+<a href="custo_beneficio.html">Custo-benefício</a><a href="unb.html" class="on">UnB</a></nav>
+<h1>Imóveis residenciais da UnB</h1>
+<p class="sub">5 disponíveis · verificado em 21/09/2026 às 17:47
+ · fonte: <a href="https://imoveisunb.unb.br/" target="_blank">SPI/UnB</a></p>
+
+<div class="box">
+  <b>Por que vale monitorar</b>
+  <p style="margin:8px 0 0;font-size:14px">São poucos imóveis e eles giram rápido — aparecem e somem em
+  dias. O “% vs mercado” compara o <b>custo total</b> (aluguel + condomínio) por m² com o que se paga
+  na mesma região nos portais. A distância é até a <b>SQN 214</b>, e o “custo de vida” soma
+  aluguel + condomínio + gasolina (10 km/l a R$ 6,68/l).</p>
+</div>
+
+<table>
+  <thead><tr><th>Imóvel</th><th style="text-align:right">Aluguel</th>
+  <th style="text-align:right">Condomínio</th><th style="text-align:right">Total</th>
+  <th style="text-align:right">Área</th><th style="text-align:right">Qtos</th>
+  <th style="text-align:right">vs mercado</th><th style="text-align:right">Distância</th>
+  <th style="text-align:right">Custo de vida</th></tr></thead>
+  <tbody><tr>
+          <td><a href="https://imoveisunb.unb.br/sqn-214-bl-c-ap-305/" target="_blank" rel="noopener">SQN 214 BL C AP 305</a><span class="s bom">muito bom</span>
+            <div class="sub2">com fila virtual · 2026-09-18</div></td>
+          <td class="n">R$ 4.578</td>
+          <td class="n">R$ 1.072</td>
+          <td class="n"><b>R$ 5.650</b></td>
+          <td class="n">102 m²</td>
+          <td class="n">2</td>
+          <td class="n pos">+25%</td>
+          <td class="n">0.0 km</td>
+          <td class="n">R$ 5.650</td></tr><tr>
+          <td><a href="https://imoveisunb.unb.br/sqn-212-bl-i-ap-309/" target="_blank" rel="noopener">SQN 212 BL I AP 309</a><span class="s bom">muito bom</span>
+            <div class="sub2">com fila virtual · 2026-09-18</div></td>
+          <td class="n">R$ 6.007</td>
+          <td class="n">R$ 2.078</td>
+          <td class="n"><b>R$ 8.085</b></td>
+          <td class="n">130 m²</td>
+          <td class="n">3</td>
+          <td class="n pos">+15%</td>
+          <td class="n">0.8 km</td>
+          <td class="n">R$ 8.116</td></tr><tr>
+          <td><a href="https://imoveisunb.unb.br/sqn-212-bl-i-ap-406/" target="_blank" rel="noopener">SQN 212 BL I AP 305</a><span class="s bom">muito bom</span>
+            <div class="sub2">com fila virtual · 2026-09-18</div></td>
+          <td class="n">R$ 6.007</td>
+          <td class="n">R$ 2.078</td>
+          <td class="n"><b>R$ 8.085</b></td>
+          <td class="n">130 m²</td>
+          <td class="n">3</td>
+          <td class="n pos">+15%</td>
+          <td class="n">0.8 km</td>
+          <td class="n">R$ 8.116</td></tr><tr>
+          <td><a href="https://imoveisunb.unb.br/sqn-212-bl-i-ap-406-2/" target="_blank" rel="noopener">SQN 212 BL I AP 406</a><span class="s bom">muito bom</span>
+            <div class="sub2">com fila virtual · 2026-09-18</div></td>
+          <td class="n">R$ 6.068</td>
+          <td class="n">R$ 2.078</td>
+          <td class="n"><b>R$ 8.146</b></td>
+          <td class="n">130 m²</td>
+          <td class="n">3</td>
+          <td class="n pos">+15%</td>
+          <td class="n">0.8 km</td>
+          <td class="n">R$ 8.177</td></tr><tr>
+          <td><a href="https://imoveisunb.unb.br/sqn-310-bl-e-ap-206/" target="_blank" rel="noopener">SQN 310 BL E AP 206</a>
+            <div class="sub2">com fila virtual · 2026-09-18</div></td>
+          <td class="n">R$ 5.769</td>
+          <td class="n">R$ 1.907</td>
+          <td class="n"><b>R$ 7.676</b></td>
+          <td class="n">116 m²</td>
+          <td class="n">3</td>
+          <td class="n pos">+10%</td>
+          <td class="n">1.7 km</td>
+          <td class="n">R$ 7.743</td></tr></tbody></table>
+
+<p class="nota" style="margin-top:16px">O condomínio informado pela UnB é aproximado — confirme com a
+administradora. Imóveis “com fila virtual” exigem inscrição em horário específico; os “sem fila” são
+por ordem de chegada na SPI, com visitação nas quartas até as 14h.</p>
+</div></body></html>

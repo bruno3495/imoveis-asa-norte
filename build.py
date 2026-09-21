@@ -374,7 +374,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <header>
     <div class="row" style="justify-content:space-between">
       <h1>🏙️ Imóveis DF <small>aluguel & compra · 1 a 3 quartos</small></h1>
-      <nav class="tabs"><a href="index.html" class="on">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html">Custo-benefício</a></nav>
+      <nav class="tabs"><a href="index.html" class="on">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html">Custo-benefício</a><a href="unb.html">UnB</a></nav>
       <div class="legend">
         <b><span class="dot" style="background:var(--venda)"></span>Compra (__N_VENDA__)</b>
         <b><span class="dot" style="background:var(--aluguel)"></span>Aluguel (__N_ALUGUEL__)</b>

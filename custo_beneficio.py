@@ -22,10 +22,25 @@ regiao, e o custo absoluto do m2 ENTRE regioes.
 import json, statistics as st, datetime
 from collections import defaultdict
 from build import (valid_price, valid_geo, drop_outliers, dedup,
-                   extract_quadra, extract_bloco, snap_para_quadra)
+                   extract_quadra, extract_bloco, snap_para_quadra, km)
 from scrape import REGIONS
 
 LABEL = {r["key"]: r["label"] for r in REGIONS}
+
+# --- deslocamento ate o trabalho -------------------------------------------
+# Morar longe troca aluguel por combustivel, e a conta costuma ser menos
+# vantajosa do que parece: cada km de distancia vira ~2 x 22 idas e voltas no mes.
+TRABALHO = "SQN 214"          # onde o Bruno trabalha
+CONSUMO_KML = 10.0            # km por litro
+PRECO_LITRO = 6.68            # gasolina comum, media do DF (ANP, 16/09/2026)
+DIAS_UTEIS = 22               # idas e voltas por mes
+FATOR_RUA = 1.35              # trajeto real x linha reta (desvio de vias urbanas)
+
+
+def custo_combustivel(dist_reta_km):
+    """Gasto mensal de gasolina no trajeto casa-trabalho-casa."""
+    km_mes = dist_reta_km * FATOR_RUA * 2 * DIAS_UTEIS
+    return km_mes / CONSUMO_KML * PRECO_LITRO
 
 # ---------------------------------------------------------------------------
 # Curadoria visual: a foto de capa de cada um dos melhores colocados foi aberta
@@ -98,10 +113,22 @@ def analisar():
             if x['operation'] == 'aluguel' and x['kind'] == 'apartamento'
             and x.get('area') and x['bedrooms'] in AREA_MAX
             and AREA_MIN < x['area'] <= AREA_MAX[x['bedrooms']]]
+    # origem: centro da quadra onde ele trabalha, pela mediana dos anuncios de la
+    naq = [y for y in d if y.get('quadra') == TRABALHO]
+    origem = (st.median([y['lat'] for y in naq]),
+              st.median([y['lon'] for y in naq])) if naq else None
+
     for x in base:
         x['m2'] = x['price'] / x['area']
         x['total'] = x['price'] + (x.get('condo') or 0)
         x['m2_total'] = x['total'] / x['area']
+        if origem:
+            x['dist'] = km(origem[0], origem[1], x['lat'], x['lon'])
+            x['gas'] = custo_combustivel(x['dist'])
+            x['custo_vida'] = x['total'] + x['gas']   # aluguel + condominio + gasolina
+        else:
+            x['dist'] = x['gas'] = None
+            x['custo_vida'] = x['total']
 
     ref = {}
     por = defaultdict(list)
@@ -123,11 +150,11 @@ def analisar():
             falsas += 1
             continue
         cand.append(x)
-    return base, cand, ref, falsas
+    return base, cand, ref, falsas, origem
 
 
 def main():
-    base, cand, ref, falsas = analisar()
+    base, cand, ref, falsas, origem = analisar()
     brl = lambda v: ('R$ ' + f'{v:,.0f}').replace(',', '.')
     brl2 = lambda v: ('R$ ' + f'{v:,.2f}').replace(',', 'X').replace('.', ',').replace('X', '.')
 
@@ -152,6 +179,11 @@ def main():
         foto = (f'<img src="{x["image"]}" alt="" loading="lazy">'
                 if x.get('image') else '<div class="nofoto">sem foto</div>')
         local = (x.get('quadra') or '') + ((' Bl. ' + x['bloco']) if x.get('bloco') else '')
+        desl = ''
+        if x.get('gas') is not None:
+            desl = (f'<div class="desl">🚗 {x["dist"]:.1f} km do trabalho · '
+                    f'<b>{brl(x["gas"])}</b> de gasolina/mês · '
+                    f'custo de vida {brl(x["custo_vida"])}</div>')
         av = AVALIACAO.get(x['url'])
         selo = obs = ''
         if av:
@@ -167,6 +199,7 @@ def main():
             <div class="local">{local or 'Localização não detalhada'}</div>
             <div class="meta">{x['bedrooms']} quartos · {x['area']:.0f} m² ·
               <b>{brl2(x['m2'])}/m²</b> <span class="ref">(região: {brl2(x['ref'])})</span></div>
+            {desl}
             {obs}
             <div class="cta">ver anúncio ↗</div>
           </div></a>"""
@@ -186,6 +219,41 @@ def main():
         <td class="n">{brl2(v)}</td>
         <td class="barra"><i style="width:{v/maxref*100:.0f}%"></i></td>
         <td class="n">{sum(1 for x in base if x['region']==k)}</td></tr>""" for k, v in regs)
+
+    # ---------- o preco de morar longe ----------
+    porreg_dist = defaultdict(list)
+    for x in base:
+        if x.get('dist') is not None:
+            porreg_dist[x['region']].append(x)
+    linhas_desl = ''
+    if porreg_dist:
+        # a Asa Norte e a referencia: e onde ele trabalha
+        ref_aluguel = st.median([x['price'] for x in porreg_dist.get('asa-norte', [])]) \
+            if porreg_dist.get('asa-norte') else None
+        dados_desl = []
+        for r in REGIONS:
+            g = porreg_dist.get(r['key'])
+            if not g:
+                continue
+            dist = st.median([x['dist'] for x in g])
+            gas = custo_combustivel(dist)
+            alug = st.median([x['price'] for x in g])
+            economia = (ref_aluguel - alug) if ref_aluguel else 0
+            liquido = economia - gas
+            dados_desl.append((r['key'], dist, gas, alug, economia, liquido))
+        dados_desl.sort(key=lambda z: z[1])
+        for k, dist, gas, alug, econ, liq in dados_desl:
+            if k == 'asa-norte':
+                cls, txt = '', '— referência —'
+            elif liq > 0:
+                cls, txt = 'pos', f'+{brl(liq)}'
+            else:
+                cls, txt = 'neg', f'−{brl(abs(liq))}'
+            linhas_desl += f"""<tr>
+              <td>{LABEL[k]}</td><td class="n">{dist:.1f} km</td>
+              <td class="n">{brl(gas)}</td><td class="n">{brl(alug)}</td>
+              <td class="n">{brl(econ) if k!='asa-norte' else '—'}</td>
+              <td class="n {cls}">{txt}</td></tr>"""
 
     html = f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -221,6 +289,7 @@ nav a.on{{background:var(--ac);color:#fff}}
   padding:3px 8px;border-radius:6px}}
 .obs{{font-size:12px;color:var(--ink);opacity:.82;margin-top:8px;line-height:1.35;
   border-top:1px solid var(--line);padding-top:7px}}
+.desl{{font-size:12px;color:var(--mut);margin-top:6px;line-height:1.35}}
 .corpo{{padding:12px 13px 13px}}
 .preco{{font-size:19px;font-weight:800;letter-spacing:-.4px}}
 .preco span{{font-size:12px;font-weight:600;color:var(--mut)}}
@@ -234,9 +303,10 @@ th,td{{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left}}
 th{{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}}
 td.n{{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}}
 td.barra{{width:45%}} td.barra i{{display:block;height:11px;background:var(--ac);border-radius:4px}}
+td.pos{{color:var(--ok)}} td.neg{{color:#d03b3b}}
 .nota{{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0;margin-top:14px}}
 </style></head><body><div class="wrap">
-<nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html" class="on">Custo-benefício</a></nav>
+<nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html" class="on">Custo-benefício</a><a href="unb.html">UnB</a></nav>
 <h1>Melhores custo-benefício de aluguel</h1>
 <p class="sub">Apartamentos no DF · coleta de {datetime.date.today().strftime('%d/%m/%Y')}
  · DFImóveis e Wimóveis, já deduplicadas</p>
@@ -271,6 +341,21 @@ td.barra{{width:45%}} td.barra i{{display:block;height:11px;background:var(--ac)
 <div class="box"><table>
   <thead><tr><th>Região</th><th style="text-align:right">R$/m²</th><th></th><th style="text-align:right">Anúncios</th></tr></thead>
   <tbody>{linhas_reg}</tbody></table></div>
+
+<h2>O preço de morar longe</h2>
+<p class="sub">Você trabalha na <b>{TRABALHO}</b>. Cada quilômetro vira ida e volta {DIAS_UTEIS} vezes por mês —
+a gasolina devolve boa parte do aluguel mais barato. Conta: {CONSUMO_KML:.0f} km/l,
+gasolina a {brl2(PRECO_LITRO)} (média do DF, ANP) e trajeto real {int((FATOR_RUA-1)*100)}% maior que a linha reta.</p>
+<div class="box"><table>
+  <thead><tr><th>Região</th><th style="text-align:right">Distância</th>
+  <th style="text-align:right">Gasolina/mês</th><th style="text-align:right">Aluguel mediano</th>
+  <th style="text-align:right">Economia no aluguel</th><th style="text-align:right">Vantagem real</th></tr></thead>
+  <tbody>{linhas_desl}</tbody></table>
+  <p style="margin:12px 0 0;font-size:13.5px;color:var(--mut)">“Vantagem real” é o quanto sobra
+  depois de descontar a gasolina da economia no aluguel, comparado com morar na Asa Norte.
+  Verde significa que compensa; vermelho, que o deslocamento come mais do que você economiza.
+  Não entram estacionamento, manutenção, pedágio nem o seu tempo.</p>
+</div>
 
 <h2>Os {len(top)} melhores negócios do DF</h2>
 <p class="sub">Maior desconto sobre o m² da própria região — mas reordenados pelo que a

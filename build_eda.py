@@ -204,7 +204,7 @@ tbody tr:hover{background:var(--plane)}
 <body>
 <header><div class="hrow">
   <h1>📊 Imóveis DF <small>análise exploratória</small></h1>
-  <nav><a href="index.html">Mapa</a><a href="analise.html" class="on">Análise</a><a href="custo_beneficio.html">Custo-benefício</a></nav>
+  <nav><a href="index.html">Mapa</a><a href="analise.html" class="on">Análise</a><a href="custo_beneficio.html">Custo-benefício</a><a href="unb.html">UnB</a></nav>
   <div class="filtros">
     <span class="flab">Quartos</span>
     <div class="chips" id="bedChips">
