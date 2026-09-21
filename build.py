@@ -17,9 +17,13 @@ MAX_VENDA   = 15_000_000     # p99 real = 2,9 mi
 MAX_ALUGUEL = 40_000         # p99 real = 14,5 mil
 
 # setores/quadras do DF
-_PREF = (r'(SQNW|SQN|SQS|SCLRN|SCLN|SCRN|SHCGN|SHCS|SHCN|SGAN|SEPN|SHTN|SHLN|SHN|STN|SCEN|'
-         r'CLN|CLS|EQN|EQS|QNL|QNM|QNA|QNB|QNC|QND|QNE|QNG|QNJ|QNP|QSA|QSB|QSC|QSD|QI|QL|QE|QS|'
-         r'SCN|SDN|SMDB|SMPW|AOS|AE|CA)')
+# Setores do DF, do prefixo mais longo para o mais curto (a alternancia do regex
+# casa a primeira opcao, entao SHCGN precisa vir antes de SHN).
+_PREF = (r'(SHCGN|SCLRN|SHIGS|SQNW|SCLN|SCRN|SHCS|SHCN|SGAN|SEPN|SHTN|SHLN|SCEN|SGAS|SEPS|'
+         r'SMDB|SMPW|SMAS|SQN|SQS|SHN|STN|SCN|SDN|SIA|SOF|SHA|'
+         r'CLN|CLS|CRN|CRS|CNB|CSB|CSG|CSA|ADE|AOS|'
+         r'QNL|QNM|QNA|QNB|QNC|QND|QNE|QNG|QNJ|QNP|QNF|QNN|QNO|QNR|'
+         r'QSA|QSB|QSC|QSD|QSF|EQN|EQS|QI|QL|QE|QS|AE|CA)')
 _RX_NUM = re.compile(r'\b' + _PREF + r'\s*0*(\d{1,3})\b', re.I)
 _RX_SEC = re.compile(r'\b' + _PREF + r'\b', re.I)
 
@@ -166,14 +170,15 @@ def dedup(items):
     for x in items:
         area = x.get("area") or 0
         q, bl = x.get("quadra"), x.get("bloco")
-        if q and bl:
+        reg = x.get("region")          # o mesmo rotulo de quadra existe em mais
+        if q and bl:                   # de uma regiao, entao ele entra na chave
             # quadra + bloco identifica o predio: fusao segura
-            lugar = ("qb", q, bl)
+            lugar = ("qb", reg, q, bl)
         elif q:
             # sem bloco, so funde se o preco tambem bater (~2%): dois anuncios do
             # mesmo tamanho na mesma quadra por precos diferentes costumam ser
             # apartamentos diferentes, e apagar um deles esconde oferta real
-            lugar = ("qp", q, round(x["price"] / max(50.0, x["price"] * 0.02)))
+            lugar = ("qp", reg, q, round(x["price"] / max(50.0, x["price"] * 0.02)))
         else:
             lugar = ("xy", round(x["lat"], 4), round(x["lon"], 4))
         key = (
