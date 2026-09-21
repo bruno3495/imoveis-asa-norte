@@ -580,9 +580,20 @@ function render(fit){
   clusterV.addLayers(mv); clusterA.addLayers(ma);
   document.getElementById('count').textContent = vis.length.toLocaleString('pt-BR')+' imóveis';
   if(fit && vis.length){
-    map.fitBounds(L.latLngBounds(vis.map(x=>[x._lat,x._lon])).pad(0.05));
+    limites = L.latLngBounds(vis.map(x=>[x._lat,x._lon])).pad(0.05);
+    map.fitBounds(limites);
   }
 }
+// O mapa e enquadrado antes de o container ter altura definitiva, e o Leaflet
+// acabava mostrando o mundo inteiro. Reavalia o tamanho e reenquadra quando o
+// layout assenta (e a cada redimensionamento da janela).
+let limites = null;
+function reajustar(){
+  map.invalidateSize();
+  if(limites) map.fitBounds(limites);
+}
+window.addEventListener('resize', reajustar);
+window.addEventListener('load', ()=>setTimeout(reajustar, 120));
 
 const mapEl=document.getElementById('map');
 function applySplit(){ mapEl.classList.toggle('split', state.op==='ambos'); }
@@ -631,6 +642,7 @@ $('limpar').addEventListener('click',()=>{
 
 applySplit();
 render(true);
+setTimeout(reajustar, 250);
 </script>
 </body>
 </html>"""
