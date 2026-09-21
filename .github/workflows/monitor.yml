@@ -18,16 +18,22 @@ jobs:
 
       - name: Conferir frescor da última atualização
         run: |
-          if [ ! -f last_run.txt ]; then
-            echo "::error::last_run.txt não existe — a atualização automática nunca registrou sucesso."
+          # Le raw_meta.json, que o scrape.py escreve a CADA coleta bem-sucedida
+          # (manual ou agendada). Antes lia last_run.txt, so escrito pelo update.py,
+          # e por isso acusava atraso mesmo apos uma atualizacao manual.
+          if [ -f raw_meta.json ]; then
+            data=$(python -c "import json;print(json.load(open('raw_meta.json'))['coletado_em'])")
+          elif [ -f last_run.txt ]; then
+            data=$(head -c 10 last_run.txt)
+          else
+            echo "::error::Sem raw_meta.json nem last_run.txt — nenhuma coleta registrou sucesso."
             exit 1
           fi
-          data=$(head -c 10 last_run.txt)
-          echo "Última atualização registrada: $data"
+          echo "Última coleta registrada: $data"
           dias=$(( ( $(date +%s) - $(date -d "$data" +%s) ) / 86400 ))
           echo "Faz $dias dia(s)."
-          if [ "$dias" -gt 8 ]; then
-            echo "::error::O painel não é atualizado há $dias dias (limite: 8). Verifique se o PC ligou e se a Tarefa Agendada 'Atualizar Imoveis Asa Norte' rodou (veja update.log)."
+          if [ "$dias" -gt 9 ]; then
+            echo "::error::O painel não é atualizado há $dias dias (limite: 9). Verifique se o PC ligou e se a Tarefa Agendada 'Atualizar Imoveis Asa Norte' rodou (veja update.log; a causa mais comum é o PC ainda estar sem DNS na hora)."
             exit 1
           fi
           echo "OK — atualizado dentro do prazo."

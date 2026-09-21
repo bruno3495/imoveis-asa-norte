@@ -86,10 +86,14 @@ def fetch(url, tries=3, timeout=30):
     return None
 
 
-def rede_ok(tentativas=6, espera=20):
-    """Confirma que ha internet antes de comecar. A tarefa agendada pode disparar
-    logo depois do boot, com a rede ainda sem DNS — foi o que zerou a coleta de
-    31/08/2026 (getaddrinfo failed em 904 requisicoes)."""
+def rede_ok(tentativas=20, espera=45):
+    """Confirma que ha internet antes de comecar. A tarefa agendada dispara logo
+    depois do boot, com a rede ainda sem DNS — foi o que zerou a coleta de
+    31/08/2026 (getaddrinfo failed em 904 requisicoes).
+
+    A espera precisa ser generosa: com 2 minutos de paciencia as execucoes de
+    14/09 e 21/09 desistiram antes de a rede subir e o painel ficou 19 dias sem
+    atualizar. 20 x 45 s da 15 minutos, e o Agendador ainda repete a tarefa."""
     alvo = "https://www.dfimoveis.com.br/venda/df/brasilia/asa-norte/apartamento/2-quartos"
     for i in range(1, tentativas + 1):
         if fetch(alvo, tries=1, timeout=20):
