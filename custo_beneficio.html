@@ -1,0 +1,484 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Melhores custo-benefício de aluguel — DF</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f7f5;--card:#fff;--ink:#111;--mut:#666;--line:#e4e4de;--ac:#2a78d6;--ok:#0ca30c}
+@media(prefers-color-scheme:dark){:root{--bg:#111;--card:#1a1a19;--ink:#fff;--mut:#aaa;--line:#2c2c2a;--ac:#3987e5;--ok:#0ca30c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:22px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:17px;margin:26px 0 4px}
+nav{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:16px}
+nav a{padding:7px 15px;font-size:13px;font-weight:700;text-decoration:none;color:var(--mut);background:var(--card)}
+nav a.on{background:var(--ac);color:#fff}
+.sub{color:var(--mut);font-size:13.5px;margin:0 0 6px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin:16px 0}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.k .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.k .v{font-size:22px;font-weight:800;margin-top:4px;letter-spacing:-.5px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.16)}
+.foto{position:relative;aspect-ratio:4/3;background:var(--bg);overflow:hidden}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.nofoto{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:12px}
+.tag{position:absolute;left:9px;bottom:9px;background:rgba(0,0,0,.72);color:#fff;
+  font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px}
+.off{position:absolute;right:9px;top:9px;background:var(--ok);color:#fff;
+  font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px}
+.selo{position:absolute;left:9px;top:9px;color:#fff;font-size:10.5px;font-weight:800;
+  padding:3px 8px;border-radius:6px}
+.obs{font-size:12px;color:var(--ink);opacity:.82;margin-top:8px;line-height:1.35;
+  border-top:1px solid var(--line);padding-top:7px}
+.corpo{padding:12px 13px 13px}
+.preco{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.preco span{font-size:12px;font-weight:600;color:var(--mut)}
+.cond{font-size:12px;color:var(--mut);margin-top:2px}
+.local{font-size:13px;font-weight:700;margin-top:7px}
+.meta{font-size:12.5px;color:var(--mut);margin-top:2px}
+.meta .ref{opacity:.8}
+.cta{margin-top:10px;font-size:12.5px;font-weight:700;color:var(--ac)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+td.barra{width:45%} td.barra i{display:block;height:11px;background:var(--ac);border-radius:4px}
+.nota{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0;margin-top:14px}
+</style></head><body><div class="wrap">
+<nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html" class="on">Custo-benefício</a></nav>
+<h1>Melhores custo-benefício de aluguel</h1>
+<p class="sub">Apartamentos no DF · coleta de 21/09/2026
+ · DFImóveis e Wimóveis, já deduplicadas</p>
+
+<div class="kpis">
+  <div class="k"><div class="l">Apartamentos comparáveis</div><div class="v">2077</div></div>
+  <div class="k"><div class="l">No ranking</div><div class="v">1511</div></div>
+  <div class="k"><div class="l">Regiões com base</div><div class="v">8</div></div>
+  <div class="k"><div class="l">Falsas pechinchas</div><div class="v">546</div></div>
+  <div class="k"><div class="l">m² mais barato</div><div class="v">R$ 28,31</div></div>
+  <div class="k"><div class="l">m² mais caro</div><div class="v">R$ 85,08</div></div>
+</div>
+
+<div class="box">
+  <b>Como esta lista foi montada</b>
+  <p style="margin:8px 0 0;font-size:14px">Cada apartamento é comparado com o <b>m² típico da própria
+  região</b>, não com o DF inteiro. Isso responde “onde vale a pena <i>aqui</i>” em vez de apenas apontar
+  os bairros baratos — senão Taguatinga ganharia de todos e a Asa Norte nunca apareceria.
+  O selo verde mostra quanto o anúncio está <b>abaixo do m² da sua região</b>.</p>
+  <p style="margin:9px 0 0;font-size:14px">Ficaram de fora: <b>casas</b> (a área anunciada inclui o lote,
+  então o m² não se compara), áreas implausíveis para o número de quartos (há “3 quartos de 9.768 m²”
+  na base, que é a área do condomínio) e <b>546 falsas pechinchas</b> — anúncios baratos por m²
+  cujo condomínio informado levava o custo total acima da média da região.</p>
+  <p style="margin:9px 0 0;font-size:14px">Por fim, <b>abri a foto de capa dos primeiros colocados</b>.
+  É o passo que o número sozinho não dá: desconto grande quase sempre tem um motivo, e várias vezes o
+  motivo está na imagem — unidade de subsolo, prédio comercial, ou uma capa que mostra só a vista para
+  não mostrar o imóvel. O selo em cada card diz o que a foto revelou.</p>
+</div>
+
+<h2>O m² por região</h2>
+<p class="sub">Mediana do aluguel por m², do mais barato ao mais caro. É o trade-off de localização.</p>
+<div class="box"><table>
+  <thead><tr><th>Região</th><th style="text-align:right">R$/m²</th><th></th><th style="text-align:right">Anúncios</th></tr></thead>
+  <tbody><tr>
+        <td>Taguatinga</td>
+        <td class="n">R$ 28,31</td>
+        <td class="barra"><i style="width:33%"></i></td>
+        <td class="n">246</td></tr><tr>
+        <td>Sobradinho</td>
+        <td class="n">R$ 31,94</td>
+        <td class="barra"><i style="width:38%"></i></td>
+        <td class="n">37</td></tr><tr>
+        <td>Guará I</td>
+        <td class="n">R$ 44,00</td>
+        <td class="barra"><i style="width:52%"></i></td>
+        <td class="n">33</td></tr><tr>
+        <td>Águas Claras</td>
+        <td class="n">R$ 49,00</td>
+        <td class="barra"><i style="width:58%"></i></td>
+        <td class="n">685</td></tr><tr>
+        <td>Asa Sul</td>
+        <td class="n">R$ 62,54</td>
+        <td class="barra"><i style="width:74%"></i></td>
+        <td class="n">304</td></tr><tr>
+        <td>Lago Norte</td>
+        <td class="n">R$ 65,41</td>
+        <td class="barra"><i style="width:77%"></i></td>
+        <td class="n">68</td></tr><tr>
+        <td>Asa Norte</td>
+        <td class="n">R$ 66,81</td>
+        <td class="barra"><i style="width:79%"></i></td>
+        <td class="n">476</td></tr><tr>
+        <td>Noroeste</td>
+        <td class="n">R$ 85,08</td>
+        <td class="barra"><i style="width:100%"></i></td>
+        <td class="n">208</td></tr></tbody></table></div>
+
+<h2>Os 24 melhores negócios do DF</h2>
+<p class="sub">Maior desconto sobre o m² da própria região — mas reordenados pelo que a
+<b>foto do anúncio</b> revela. Abri a capa de cada um: 5 mostram imóvel em bom estado
+e 4 escondiam um problema que o preço sozinho não contava.</p>
+<div class="grade"><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-para-alugar-na-asa-norte-em-brasilia-df-3043394154.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/43/39/41/54/720x532/7112260120.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">59% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 5.000<span>/mês</span></div>
+            <div class="cond">cond. R$ 800 · total R$ 5.800</div>
+            <div class="local">SHCGN 708 Bl. P</div>
+            <div class="meta">3 quartos · 183 m² ·
+              <b>R$ 27,32/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Sala ampla e clara, porcelanato novo, luz embutida e janelões com vista verde. Reformado.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/kitnet-mobiliada-com-garagem-na-asa-norte-em-brasilia-3045179286.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/45/17/92/86/720x532/7176550643.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">54% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.800<span>/mês</span></div>
+            <div class="cond">cond. R$ 402 · total R$ 2.202</div>
+            <div class="local">STN Bl. L</div>
+            <div class="meta">1 quartos · 59 m² ·
+              <b>R$ 30,51/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Mobiliada e pronta para morar: estante, sofá, mesa e cozinha com bancada de granito.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/sgan-912-ed.-master-place-otima-iluminacao-natural-3016702432.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/16/70/24/32/720x532/5399689273.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">54% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.100<span>/mês</span></div>
+            <div class="cond">cond. R$ 486 · total R$ 2.586</div>
+            <div class="local">SGAN 912 Bl. F</div>
+            <div class="meta">1 quartos · 68 m² ·
+              <b>R$ 30,88/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Compacto mas bem conservado: armários, cozinha equipada e boa luz natural.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/res-spot-aguas-claras-mobiliado-nao-exige-fiador-3042851265.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/42/85/12/65/720x532/7081460187.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">53% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.300<span>/mês</span></div>
+            <div class="cond">cond. R$ 560 · total R$ 2.860</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">1 quartos · 100 m² ·
+              <b>R$ 23,00/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            <div class="obs">Torre moderna com sacadas de vidro e paisagismo cuidado. Mobiliado e sem fiador.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/sqnw-107-02-quartos-com-armarios-com-02vg.-3041221064.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/41/22/10/64/720x532/6994598043.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Noroeste</span>
+            <span class="off">52% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 6.600<span>/mês</span></div>
+            <div class="cond">cond. R$ 990 · total R$ 7.590</div>
+            <div class="local">SQNW 108 Bl. B</div>
+            <div class="meta">2 quartos · 160 m² ·
+              <b>R$ 41,25/m²</b> <span class="ref">(região: R$ 85,08)</span></div>
+            <div class="obs">Prédios novos do Noroeste, bem conservados. O m² mais caro do DF, mas abaixo da média local.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-de-1-quarto-asa-norte-714-15-3043643317.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/43/64/33/17/720x532/7125327094.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">64% abaixo</span><span class="selo" style="background:#2a78d6">• simples</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 850<span>/mês</span></div>
+            <div class="cond">cond. R$ 150 · total R$ 1.000</div>
+            <div class="local">SCRN 714 Bl. E</div>
+            <div class="meta">1 quartos · 35 m² ·
+              <b>R$ 24,29/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Vazio, acabamento antigo e porta gradeada. Básico, mas limpo — e raro por esse preço na Asa Norte.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-2-andar-com-01-quarto-eqnl-21-23.-2976212265.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/29/76/21/22/65/720x532/7228288601.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Taguatinga</span>
+            <span class="off">58% abaixo</span><span class="selo" style="background:#2a78d6">• simples</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 950<span>/mês</span></div>
+            <div class="cond">cond. R$ 30 · total R$ 980</div>
+            <div class="local"> Bl. B</div>
+            <div class="meta">1 quartos · 80 m² ·
+              <b>R$ 11,88/m²</b> <span class="ref">(região: R$ 28,31)</span></div>
+            <div class="obs">Interior vazio e limpo, piso cerâmico e boa luz. 80 m² por esse valor é muito espaço.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-de-1-quarto-qnm-40-conjunto-a2-3045648297.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/45/64/82/97/720x532/7203337005.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Taguatinga</span>
+            <span class="off">58% abaixo</span><span class="selo" style="background:#2a78d6">• simples</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 600<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QNM 40</div>
+            <div class="meta">1 quartos · 50 m² ·
+              <b>R$ 12,00/m²</b> <span class="ref">(região: R$ 28,31)</span></div>
+            <div class="obs">Cozinha com acabamento novo e sacada. Modesto, mas funcional — e é o aluguel mais barato da lista.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/kitnet-de-canto-com-garagem-e-vista-para-o-parque-da-3046390341.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/46/39/03/41/720x532/7249836932.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Sul</span>
+            <span class="off">65% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.000<span>/mês</span></div>
+            <div class="cond">cond. R$ 500 · total R$ 2.500</div>
+            <div class="local">SGAS</div>
+            <div class="meta">1 quartos · 92 m² ·
+              <b>R$ 21,74/m²</b> <span class="ref">(região: R$ 62,54)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-areal-aguas-claras-df-qs-6-677425" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/677425/701db1f01e297e6019584c3b13d14f4e.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">59% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 900<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 6</div>
+            <div class="meta">1 quartos · 45 m² ·
+              <b>R$ 20,00/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/ca-11-ed-next-duplex-3044280289.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/44/28/02/89/720x532/7159658304.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Lago Norte</span>
+            <span class="off">58% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.500<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.060 · total R$ 3.560</div>
+            <div class="local">CA 11</div>
+            <div class="meta">1 quartos · 90 m² ·
+              <b>R$ 27,78/m²</b> <span class="ref">(região: R$ 65,41)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-areal-aguas-claras-df-qs-8-conjunto-410b-764349" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/764349/2cf47d966bcae6262925cfec3b2cd27f.jpg?format=webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">57% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.150<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 8</div>
+            <div class="meta">1 quartos · 55 m² ·
+              <b>R$ 20,91/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/perto-de-tudo-3046210204.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/46/21/02/04/720x532/7237225282.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Sul</span>
+            <span class="off">56% abaixo</span><span class="selo" style="background:#898781">? só fachada</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 4.500<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.289 · total R$ 5.789</div>
+            <div class="local">SQS 307 Bl. J</div>
+            <div class="meta">3 quartos · 162 m² ·
+              <b>R$ 27,78/m²</b> <span class="ref">(região: R$ 62,54)</span></div>
+            <div class="obs">Só o jardim da superquadra, arborizado e agradável — mas nada do apartamento. Condomínio alto (R$ 1.289).</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/villa-lucci-3-quartos-1-suite-lazer-completo-1-3043085364.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/43/08/53/64/720x532/7125626913.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">55% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.780<span>/mês</span></div>
+            <div class="cond">cond. R$ 910 · total R$ 3.690</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">3 quartos · 125 m² ·
+              <b>R$ 22,24/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-areal-aguas-claras-df-qs-6-1418710" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1418710/b56c9328a2231e7f03f6ff2a8df43ea2.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">54% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 900<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 6</div>
+            <div class="meta">1 quartos · 40 m² ·
+              <b>R$ 22,50/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-areal-aguas-claras-df-qs-7-rua-810-1365908" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1365908/e7a4efa0fdd8baab6b7ea47d25bcb094.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">54% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.150<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 7</div>
+            <div class="meta">2 quartos · 51 m² ·
+              <b>R$ 22,55/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/sqn-313-bloco-g-locacao-apartamento-5-andar-03-2939674837.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/29/39/67/48/37/720x532/7100605806.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">53% abaixo</span><span class="selo" style="background:#898781">? só fachada</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 5.200<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.191 · total R$ 6.391</div>
+            <div class="local">SQN 313 Bl. G</div>
+            <div class="meta">3 quartos · 167 m² ·
+              <b>R$ 31,14/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Só o bloco por fora, bem conservado. O interior não foi mostrado.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/duplex-reformado-para-locacao-3042093676.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/42/09/36/76/720x532/7042984858.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">53% abaixo</span><span class="selo" style="background:#898781">? só fachada</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 4.500<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.078 · total R$ 5.578</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">3 quartos · 196 m² ·
+              <b>R$ 22,96/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            <div class="obs">Anúncio diz duplex reformado, mas a capa mostra só a torre. Confirme o estado na visita.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-para-aluguel-no-residencial-araucaria-3040553452.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/40/55/34/52/720x532/6956249091.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">52% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 4.250<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.641 · total R$ 5.891</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">3 quartos · 180 m² ·
+              <b>R$ 23,61/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-ade-aguas-claras-df-ade-conjunto-28-1438450" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1438450/516772f602e65ced3a63f280f2e435ad.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">52% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 950<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">ADE</div>
+            <div class="meta">1 quartos · 40 m² ·
+              <b>R$ 23,75/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/clrn-716-subsolo-3023744604.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/23/74/46/04/720x532/5818045258.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">60% abaixo</span><span class="selo" style="background:#d03b3b">! atenção</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.200<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local"> Bl. F</div>
+            <div class="meta">1 quartos · 45 m² ·
+              <b>R$ 26,67/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">O título diz SUBSOLO e a foto mostra a fachada comercial da rua, com banco no térreo. Aí está o desconto.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-areal-aguas-claras-df-qs-7-rua-800-1408344" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1408344/66f4ded9d24ec1542eeb0033214cf611.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">59% abaixo</span><span class="selo" style="background:#d03b3b">! atenção</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.100<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 7</div>
+            <div class="meta">2 quartos · 55 m² ·
+              <b>R$ 20,00/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            <div class="obs">Foto mostra prédio comercial com placa de aluguel e garagem, em rua sem asfalto. O título ainda diz Taguatinga Sul.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-asa-norte-brasilia-df-scrn-716-bloco-h-1354668" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1354668/ec0b77a01318bb43d4ffda7c9bb2ec20.webp" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">57% abaixo</span><span class="selo" style="background:#d03b3b">! atenção</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.600<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">SCRN 716 Bl. H</div>
+            <div class="meta">1 quartos · 90 m² ·
+              <b>R$ 28,89/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Sobreloja em bloco comercial (LJ 40), com desgaste aparente na fachada. Não é apartamento de superquadra.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-ade-aguas-claras-df-ade-conjunto-20-1359560" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1359560/3ac66b14a309e294c2f940a73caca211.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">55% abaixo</span><span class="selo" style="background:#d03b3b">! atenção</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.000<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">ADE</div>
+            <div class="meta">2 quartos · 45 m² ·
+              <b>R$ 22,22/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            <div class="obs">Prédio de esquina com lojas de porta de aço no térreo. ADE é área de desenvolvimento econômico, zona comercial.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a></div>
+
+<h2>O melhor de cada região</h2>
+<p class="sub">Para quem já sabe onde quer morar.</p>
+<div class="grade"><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-de-1-quarto-asa-norte-714-15-3043643317.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/43/64/33/17/720x532/7125327094.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Norte</span>
+            <span class="off">64% abaixo</span><span class="selo" style="background:#2a78d6">• simples</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 850<span>/mês</span></div>
+            <div class="cond">cond. R$ 150 · total R$ 1.000</div>
+            <div class="local">SCRN 714 Bl. E</div>
+            <div class="meta">1 quartos · 35 m² ·
+              <b>R$ 24,29/m²</b> <span class="ref">(região: R$ 66,81)</span></div>
+            <div class="obs">Vazio, acabamento antigo e porta gradeada. Básico, mas limpo — e raro por esse preço na Asa Norte.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/kitnet-de-canto-com-garagem-e-vista-para-o-parque-da-3046390341.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/46/39/03/41/720x532/7249836932.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Asa Sul</span>
+            <span class="off">65% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.000<span>/mês</span></div>
+            <div class="cond">cond. R$ 500 · total R$ 2.500</div>
+            <div class="local">SGAS</div>
+            <div class="meta">1 quartos · 92 m² ·
+              <b>R$ 21,74/m²</b> <span class="ref">(região: R$ 62,54)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-setor-de-mans-es-de-sobradinho-2960915604.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/29/60/91/56/04/720x532/4411998422.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Sobradinho</span>
+            <span class="off">40% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.150<span>/mês</span></div>
+            <div class="cond">cond. R$ 50 · total R$ 1.200</div>
+            <div class="local"> Bl. P</div>
+            <div class="meta">3 quartos · 60 m² ·
+              <b>R$ 19,17/m²</b> <span class="ref">(região: R$ 31,94)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-guara-i-guara-df-qi-5-bloco-h-1439847" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1439847/2dcc524d730a623550fa3e63196c49be.webp" alt="" loading="lazy"><span class="tag">Guará I</span>
+            <span class="off">31% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.600<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QI 5 Bl. H</div>
+            <div class="meta">2 quartos · 86 m² ·
+              <b>R$ 30,23/m²</b> <span class="ref">(região: R$ 44,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-areal-aguas-claras-df-qs-6-677425" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/677425/701db1f01e297e6019584c3b13d14f4e.webp" alt="" loading="lazy"><span class="tag">Águas Claras</span>
+            <span class="off">59% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 900<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">QS 6</div>
+            <div class="meta">1 quartos · 45 m² ·
+              <b>R$ 20,00/m²</b> <span class="ref">(região: R$ 49,00)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-2-andar-com-01-quarto-eqnl-21-23.-2976212265.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/29/76/21/22/65/720x532/7228288601.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Taguatinga</span>
+            <span class="off">58% abaixo</span><span class="selo" style="background:#2a78d6">• simples</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 950<span>/mês</span></div>
+            <div class="cond">cond. R$ 30 · total R$ 980</div>
+            <div class="local"> Bl. B</div>
+            <div class="meta">1 quartos · 80 m² ·
+              <b>R$ 11,88/m²</b> <span class="ref">(região: R$ 28,31)</span></div>
+            <div class="obs">Interior vazio e limpo, piso cerâmico e boa luz. 80 m² por esse valor é muito espaço.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/sqnw-107-02-quartos-com-armarios-com-02vg.-3041221064.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/41/22/10/64/720x532/6994598043.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Noroeste</span>
+            <span class="off">52% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 6.600<span>/mês</span></div>
+            <div class="cond">cond. R$ 990 · total R$ 7.590</div>
+            <div class="local">SQNW 108 Bl. B</div>
+            <div class="meta">2 quartos · 160 m² ·
+              <b>R$ 41,25/m²</b> <span class="ref">(região: R$ 85,08)</span></div>
+            <div class="obs">Prédios novos do Noroeste, bem conservados. O m² mais caro do DF, mas abaixo da média local.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/ca-11-ed-next-duplex-3044280289.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/44/28/02/89/720x532/7159658304.jpg?isFirstImage=true" alt="" loading="lazy"><span class="tag">Lago Norte</span>
+            <span class="off">58% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.500<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.060 · total R$ 3.560</div>
+            <div class="local">CA 11</div>
+            <div class="meta">1 quartos · 90 m² ·
+              <b>R$ 27,78/m²</b> <span class="ref">(região: R$ 65,41)</span></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a></div>
+
+<p class="nota">Desconto grande quase sempre tem um motivo que o anúncio não conta: andar baixo, sem
+vaga, sem armários, precisando de reforma ou de frente para via movimentada. Trate a lista como
+<b>onde olhar primeiro</b>, não como veredito. E lembre que <b>2 em cada 3 anúncios não informam o
+condomínio</b> — nesses, o custo real é maior que o valor em destaque.</p>
+</div></body></html>
