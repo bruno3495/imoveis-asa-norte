@@ -47,6 +47,8 @@ th{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
 td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 td.barra{width:45%} td.barra i{display:block;height:11px;background:var(--ac);border-radius:4px}
 td.pos{color:var(--ok)} td.neg{color:#d03b3b}
+.fraca{font-size:10.5px;font-weight:700;color:#fff;background:#898781;
+  padding:2px 6px;border-radius:5px;margin-left:6px}
 .nota{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0;margin-top:14px}
 </style></head><body><div class="wrap">
 <nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html" class="on">Custo-benefício</a><a href="unb.html">UnB</a></nav>
@@ -56,10 +58,10 @@ td.pos{color:var(--ok)} td.neg{color:#d03b3b}
 
 <div class="kpis">
   <div class="k"><div class="l">Apartamentos comparáveis</div><div class="v">2077</div></div>
-  <div class="k"><div class="l">No ranking</div><div class="v">1511</div></div>
-  <div class="k"><div class="l">Regiões com base</div><div class="v">8</div></div>
-  <div class="k"><div class="l">Falsas pechinchas</div><div class="v">546</div></div>
-  <div class="k"><div class="l">m² mais barato</div><div class="v">R$ 28,31</div></div>
+  <div class="k"><div class="l">No ranking</div><div class="v">1521</div></div>
+  <div class="k"><div class="l">Regiões com base</div><div class="v">9</div></div>
+  <div class="k"><div class="l">Falsas pechinchas</div><div class="v">548</div></div>
+  <div class="k"><div class="l">m² mais barato</div><div class="v">R$ 25,24</div></div>
   <div class="k"><div class="l">m² mais caro</div><div class="v">R$ 85,08</div></div>
 </div>
 
@@ -71,7 +73,7 @@ td.pos{color:var(--ok)} td.neg{color:#d03b3b}
   O selo verde mostra quanto o anúncio está <b>abaixo do m² da sua região</b>.</p>
   <p style="margin:9px 0 0;font-size:14px">Ficaram de fora: <b>casas</b> (a área anunciada inclui o lote,
   então o m² não se compara), áreas implausíveis para o número de quartos (há “3 quartos de 9.768 m²”
-  na base, que é a área do condomínio) e <b>546 falsas pechinchas</b> — anúncios baratos por m²
+  na base, que é a área do condomínio) e <b>548 falsas pechinchas</b> — anúncios baratos por m²
   cujo condomínio informado levava o custo total acima da média da região.</p>
   <p style="margin:9px 0 0;font-size:14px">Por fim, <b>abri a foto de capa dos primeiros colocados</b>.
   É o passo que o número sozinho não dá: desconto grande quase sempre tem um motivo, e várias vezes o
@@ -84,6 +86,10 @@ td.pos{color:var(--ok)} td.neg{color:#d03b3b}
 <div class="box"><table>
   <thead><tr><th>Região</th><th style="text-align:right">R$/m²</th><th></th><th style="text-align:right">Anúncios</th></tr></thead>
   <tbody><tr>
+        <td>Grande Colorado <span class="fraca">amostra pequena</span></td>
+        <td class="n">R$ 25,24</td>
+        <td class="barra"><i style="width:30%"></i></td>
+        <td class="n">12</td></tr><tr>
         <td>Taguatinga</td>
         <td class="n">R$ 28,31</td>
         <td class="barra"><i style="width:33%"></i></td>
@@ -142,7 +148,7 @@ gasolina a R$ 6,68 (média do DF, ANP) e trajeto real 35% maior que a linha reta
               <td class="n">R$ 350</td><td class="n">R$ 5.595</td>
               <td class="n">R$ -1.345</td>
               <td class="n neg">−R$ 1.695</td></tr><tr>
-              <td>Grande Colorado</td><td class="n">9.3 km</td>
+              <td>Grande Colorado <span class="fraca">amostra pequena</span></td><td class="n">9.3 km</td>
               <td class="n">R$ 371</td><td class="n">R$ 1.800</td>
               <td class="n">R$ 2.450</td>
               <td class="n pos">+R$ 2.080</td></tr><tr>
@@ -154,11 +160,11 @@ gasolina a R$ 6,68 (média do DF, ANP) e trajeto real 35% maior que a linha reta
               <td class="n">R$ 540</td><td class="n">R$ 2.500</td>
               <td class="n">R$ 1.750</td>
               <td class="n pos">+R$ 1.210</td></tr><tr>
-              <td>Lago Sul</td><td class="n">14.5 km</td>
+              <td>Lago Sul <span class="fraca">amostra pequena</span></td><td class="n">14.5 km</td>
               <td class="n">R$ 574</td><td class="n">R$ 1.900</td>
               <td class="n">R$ 2.350</td>
               <td class="n pos">+R$ 1.776</td></tr><tr>
-              <td>Jardim Botânico</td><td class="n">15.7 km</td>
+              <td>Jardim Botânico <span class="fraca">amostra pequena</span></td><td class="n">15.7 km</td>
               <td class="n">R$ 622</td><td class="n">R$ 2.500</td>
               <td class="n">R$ 1.750</td>
               <td class="n pos">+R$ 1.128</td></tr><tr>
@@ -506,6 +512,18 @@ e 4 escondiam um problema que o preço sozinho não contava.</p>
             <div class="meta">3 quartos · 60 m² ·
               <b>R$ 19,17/m²</b> <span class="ref">(região: R$ 31,94)</span></div>
             <div class="desl">🚗 13.2 km do trabalho · <b>R$ 525</b> de gasolina/mês · custo de vida R$ 1.725</div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-grande-colorado-sobradinho-df-condominio-jardim-europa-ii-1107337" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1107337/57ea55a0cc2502f666888d78ff8eb966.jpeg?format=webp" alt="" loading="lazy"><span class="tag">Grande Colorado</span>
+            <span class="off">30% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 850<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">1 quartos · 48 m² ·
+              <b>R$ 17,71/m²</b> <span class="ref">(região: R$ 25,24)</span></div>
+            <div class="desl">🚗 9.4 km do trabalho · <b>R$ 372</b> de gasolina/mês · custo de vida R$ 1.222</div>
             
             <div class="cta">ver anúncio ↗</div>
           </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-guara-i-guara-df-qi-5-bloco-h-1439847" target="_blank" rel="noopener">

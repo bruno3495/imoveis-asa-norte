@@ -89,7 +89,13 @@ AVALIACAO = {
 SELO = {"ok": ("✓ bom estado", "#0ca30c"), "simples": ("• simples", "#2a78d6"),
         "fachada": ("? só fachada", "#898781"), "alerta": ("! atenção", "#d03b3b")}
 ORDEM = {"ok": 0, "simples": 1, "fachada": 2, "alerta": 3, None: 2}
-MIN_AMOSTRA = 15                  # regiao so vira referencia com base suficiente
+# Regiao vira referencia a partir daqui. Ficou em 10 (nao 15) porque com 15 o
+# Grande Colorado — que tem so 12 apartamentos, por ser regiao de casas — ficava
+# de fora, e ele e justamente um dos melhores custos-beneficio: 9,3 km do
+# trabalho e o m2 mais barato da base. Abaixo de AMOSTRA_FIRME a mediana e
+# fraca, entao a regiao aparece marcada como indicativa.
+MIN_AMOSTRA = 10
+AMOSTRA_FIRME = 20
 AREA_MAX = {1: 100, 2: 175, 3: 295}   # p99 real por quartos
 AREA_MIN = 20
 TOP = 24
@@ -214,11 +220,13 @@ def main():
                         if r['key'] in melhores_reg)
 
     maxref = max(v for _, v in regs)
+    def n_reg(k):
+        return sum(1 for x in base if x['region'] == k)
     linhas_reg = ''.join(f"""<tr>
-        <td>{LABEL[k]}</td>
+        <td>{LABEL[k]}{'' if n_reg(k) >= AMOSTRA_FIRME else ' <span class="fraca">amostra pequena</span>'}</td>
         <td class="n">{brl2(v)}</td>
         <td class="barra"><i style="width:{v/maxref*100:.0f}%"></i></td>
-        <td class="n">{sum(1 for x in base if x['region']==k)}</td></tr>""" for k, v in regs)
+        <td class="n">{n_reg(k)}</td></tr>""" for k, v in regs)
 
     # ---------- o preco de morar longe ----------
     porreg_dist = defaultdict(list)
@@ -243,6 +251,8 @@ def main():
             dados_desl.append((r['key'], dist, gas, alug, economia, liquido))
         dados_desl.sort(key=lambda z: z[1])
         for k, dist, gas, alug, econ, liq in dados_desl:
+            fraca = ('' if sum(1 for x in base if x['region'] == k) >= AMOSTRA_FIRME
+                     else ' <span class="fraca">amostra pequena</span>')
             if k == 'asa-norte':
                 cls, txt = '', '— referência —'
             elif liq > 0:
@@ -250,7 +260,7 @@ def main():
             else:
                 cls, txt = 'neg', f'−{brl(abs(liq))}'
             linhas_desl += f"""<tr>
-              <td>{LABEL[k]}</td><td class="n">{dist:.1f} km</td>
+              <td>{LABEL[k]}{fraca}</td><td class="n">{dist:.1f} km</td>
               <td class="n">{brl(gas)}</td><td class="n">{brl(alug)}</td>
               <td class="n">{brl(econ) if k!='asa-norte' else '—'}</td>
               <td class="n {cls}">{txt}</td></tr>"""
@@ -304,6 +314,8 @@ th{{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px
 td.n{{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}}
 td.barra{{width:45%}} td.barra i{{display:block;height:11px;background:var(--ac);border-radius:4px}}
 td.pos{{color:var(--ok)}} td.neg{{color:#d03b3b}}
+.fraca{{font-size:10.5px;font-weight:700;color:#fff;background:#898781;
+  padding:2px 6px;border-radius:5px;margin-left:6px}}
 .nota{{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0;margin-top:14px}}
 </style></head><body><div class="wrap">
 <nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a><a href="custo_beneficio.html" class="on">Custo-benefício</a><a href="unb.html">UnB</a></nav>
