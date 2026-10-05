@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lago Norte — aluguel com fotos</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f7f5;--card:#fff;--ink:#111;--mut:#666;--line:#e4e4de;--ac:#2a78d6;--ok:#0ca30c}
+@media(prefers-color-scheme:dark){:root{--bg:#111;--card:#1a1a19;--ink:#fff;--mut:#aaa;--line:#2c2c2a;--ac:#3987e5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:22px}
+.wrap{max-width:1080px;margin:0 auto}
+nav{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:16px}
+nav a{padding:7px 15px;font-size:13px;font-weight:700;text-decoration:none;color:var(--mut);background:var(--card)}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:17px;margin:24px 0 10px}
+.sub{color:var(--mut);font-size:13.5px;margin:0 0 16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:16px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.k .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.k .v{font-size:22px;font-weight:800;margin-top:4px;letter-spacing:-.5px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.16)}
+.foto{position:relative;aspect-ratio:4/3;background:var(--bg);overflow:hidden}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.nofoto{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:12px}
+.off{position:absolute;right:9px;top:9px;background:var(--ok);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px}
+.selo{position:absolute;left:9px;top:9px;color:#fff;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:6px}
+.corpo{padding:12px 13px 13px}
+.preco{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.preco span{font-size:12px;font-weight:600;color:var(--mut)}
+.cond{font-size:12px;color:var(--mut);margin-top:2px}
+.local{font-size:13px;font-weight:700;margin-top:7px}
+.meta{font-size:12.5px;color:var(--mut);margin-top:2px}
+.desl{font-size:12px;color:var(--mut);margin-top:6px}
+.obs{font-size:12px;opacity:.85;margin-top:8px;line-height:1.35;border-top:1px solid var(--line);padding-top:7px}
+.cta{margin-top:10px;font-size:12.5px;font-weight:700;color:var(--ac)}
+.nota{font-size:13px;color:var(--mut);border-left:3px solid var(--ac);padding:9px 12px;background:var(--card);border-radius:0 8px 8px 0;margin-top:16px}
+</style></head><body><div class="wrap">
+<nav><a href="index.html">Mapa</a><a href="analise.html">Análise</a>
+<a href="custo_beneficio.html">Custo-benefício</a><a href="unb.html">UnB</a></nav>
+<h1>Lago Norte — aluguel de apartamentos</h1>
+<p class="sub">68 anúncios comparáveis · coleta de 22/09/2026
+ · distância medida até a <b>SQN 214</b></p>
+
+<div class="kpis">
+  <div class="k"><div class="l">Anúncios</div><div class="v">68</div></div>
+  <div class="k"><div class="l">Aluguel mediano</div><div class="v">R$ 2.700</div></div>
+  <div class="k"><div class="l">Área mediana</div><div class="v">40 m²</div></div>
+  <div class="k"><div class="l">m² da região</div><div class="v">R$ 65,41</div></div>
+  <div class="k"><div class="l">Distância</div><div class="v">2.9 km</div></div>
+  <div class="k"><div class="l">Menor custo de vida</div><div class="v">R$ 1.417</div></div>
+</div>
+
+<div class="box">
+  <b>O perfil do estoque</b>
+  <p style="margin:8px 0 0;font-size:14px">São 50 de 1 quarto · 18 de 2 quartos. <b>Não há nenhum 3 quartos</b> no conjunto comparável. Isso importa mais que o preço:
+  a região resolve bem quem quer <b>morar perto pagando pouco</b>, e resolve mal quem precisa de
+  espaço. O “custo de vida” de cada card soma aluguel + condomínio + gasolina
+  (10 km/l a R$ 6,68/l, SQN 214 como destino).</p>
+  <p style="margin:9px 0 0;font-size:14px">O condomínio aparece em apenas
+  <b>17 dos 68</b> anúncios, com mediana de R$ 700 —
+  onde ele não é informado, o custo real é maior que o valor em destaque.</p>
+</div>
+
+<h2>As 16 melhores opções</h2>
+<p class="sub">Ordenadas pelo desconto sobre o m² da região, mas reordenadas pelo que a foto revelou.</p>
+<div class="grade"><a class="card" href="https://www.wimoveis.com.br/propriedades/ca-11-ed-next-duplex-3044280289.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/44/28/02/89/720x532/7159658304.jpg?isFirstImage=true" alt="" loading="lazy"><span class="off">58% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.500<span>/mês</span></div>
+            <div class="cond">cond. R$ 1.060 · total R$ 3.560</div>
+            <div class="local">CA 11</div>
+            <div class="meta">1 quarto ·
+              90 m² · <b>R$ 27,78/m²</b></div>
+            <div class="desl">🚗 3.3 km · R$ 130 de gasolina ·
+              <b>custo de vida R$ 3.690</b></div>
+            <div class="obs">Duplex claro e bem conservado, 90 m². Mas o condomínio de R$ 1.060 é 42% do aluguel — é ele que pesa no custo de vida.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/shin-ca-02-ed.-garden-place-3042583062.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/42/58/30/62/720x532/7068879061.jpg?isFirstImage=true" alt="" loading="lazy"><span class="off">45% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.000<span>/mês</span></div>
+            <div class="cond">cond. R$ 427 · total R$ 2.427</div>
+            <div class="local">CA 2 Bl. C</div>
+            <div class="meta">1 quarto ·
+              56 m² · <b>R$ 35,71/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 2.530</b></div>
+            <div class="obs">Prédio baixo bem conservado, com jardim e palmeiras. A foto é da fachada — o interior não aparece.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-09-1171129" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1171129/48efc9ab542649edbcbe807357d32f46.webp" alt="" loading="lazy"><span class="off">28% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.600<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 9</div>
+            <div class="meta">2 quartos ·
+              55 m² · <b>R$ 47,27/m²</b></div>
+            <div class="desl">🚗 3.3 km · R$ 130 de gasolina ·
+              <b>custo de vida R$ 2.730</b></div>
+            <div class="obs">Duplex com escada interna, paredes limpas, piso em bom estado e luminárias embutidas. A melhor opção de 2 quartos.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-02-1342921" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1342921/d95627a930369dcd71f38e77588f68ce.webp" alt="" loading="lazy"><span class="off">21% abaixo</span><span class="selo" style="background:#0ca30c">✓ bom estado</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.580<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 2</div>
+            <div class="meta">2 quartos ·
+              50 m² · <b>R$ 51,60/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 2.683</b></div>
+            <div class="obs">Edifício Maison do Lago, fachada cuidada e gramado. Anúncio diz mobiliado e com garagem.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/alugo-apartamento-de-1-quarto-no-edificio-premier-lago-3043843568.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/43/84/35/68/720x532/7134237894.jpg?isFirstImage=true" alt="" loading="lazy"><span class="off">26% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 3.000<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">1 quarto ·
+              62 m² · <b>R$ 48,39/m²</b></div>
+            <div class="desl">🚗 3.0 km · R$ 121 de gasolina ·
+              <b>custo de vida R$ 3.121</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/kitnet-1-quarto-aluguel-lago-norte-brasilia-df-ca-09-1046893" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1046893/ca067a27214bf6c55b55f2063bd719c1.jpg?format=webp" alt="" loading="lazy"><span class="off">26% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.700<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 9</div>
+            <div class="meta">1 quarto ·
+              35 m² · <b>R$ 48,57/m²</b></div>
+            <div class="desl">🚗 3.3 km · R$ 130 de gasolina ·
+              <b>custo de vida R$ 1.830</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/kitnet-1-quarto-aluguel-lago-norte-brasilia-df-ca-05-1143503" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1143503/1e5fe96107ec43b014092d881a429ff7.webp" alt="" loading="lazy"><span class="off">24% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.300<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 5</div>
+            <div class="meta">1 quarto ·
+              26 m² · <b>R$ 50,00/m²</b></div>
+            <div class="desl">🚗 2.9 km · R$ 117 de gasolina ·
+              <b>custo de vida R$ 1.417</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/kitnet-1-quarto-aluguel-lago-norte-brasilia-df-ca-02-1411102" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1411102/18cc130c4c8f6322237369d98910ee9c.webp" alt="" loading="lazy"><span class="off">24% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.000<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 2</div>
+            <div class="meta">1 quarto ·
+              40 m² · <b>R$ 50,00/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 2.103</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-02-1443416" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1443416/722ca9a49c6422714444993d33e23f99.webp" alt="" loading="lazy"><span class="off">21% abaixo</span><span class="selo" style="background:#898781">? só fachada</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.800<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 2</div>
+            <div class="meta">2 quartos ·
+              35 m² · <b>R$ 51,43/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 1.903</b></div>
+            <div class="obs">Prédio dos anos 80/90 em azulejo verde, conservado. Só a fachada — o interior não foi mostrado.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-11-1421466" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1421466/ac76699ce128336885270495a76106cf.webp" alt="" loading="lazy"><span class="off">20% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 3.400<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 11</div>
+            <div class="meta">2 quartos ·
+              65 m² · <b>R$ 52,31/m²</b></div>
+            <div class="desl">🚗 3.3 km · R$ 132 de gasolina ·
+              <b>custo de vida R$ 3.532</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-1-quarto-aluguel-lago-norte-brasilia-df-ca-05-1422497" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1422497/2ce4bcf66c69be70f5aaccc001c4f39b.webp" alt="" loading="lazy"><span class="off">20% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.800<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 5</div>
+            <div class="meta">1 quarto ·
+              53 m² · <b>R$ 52,44/m²</b></div>
+            <div class="desl">🚗 2.9 km · R$ 117 de gasolina ·
+              <b>custo de vida R$ 2.917</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-08-1360121" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1360121/569b7504c8cb25d579ced2ed647ea6fb.webp" alt="" loading="lazy"><span class="off">20% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 3.300<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 8</div>
+            <div class="meta">2 quartos ·
+              63 m² · <b>R$ 52,56/m²</b></div>
+            <div class="desl">🚗 3.2 km · R$ 127 de gasolina ·
+              <b>custo de vida R$ 3.427</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.wimoveis.com.br/propriedades/apartamento-de-1-quarto-para-aluguel-no-ca-do-lago-3026933462.html" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://imgbr.imovelwebcdn.com/avisos/2/30/26/93/34/62/720x532/6013362521.jpg?isFirstImage=true" alt="" loading="lazy"><span class="off">18% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 3.200<span>/mês</span></div>
+            <div class="cond">cond. R$ 320 · total R$ 3.520</div>
+            <div class="local">CA 2</div>
+            <div class="meta">1 quarto ·
+              60 m² · <b>R$ 53,33/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 3.623</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-ca-02-1372897" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1372897/78571448c1ad945e3658ab552aefadf8.webp" alt="" loading="lazy"><span class="off">17% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 3.800<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 2</div>
+            <div class="meta">2 quartos ·
+              70 m² · <b>R$ 54,29/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 3.903</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/kitnet-1-quarto-aluguel-lago-norte-brasilia-df-ca-02-1438404" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1438404/75d9f6f4c50cf2116793b97db46c7cb8.webp" alt="" loading="lazy"><span class="off">16% abaixo</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 2.200<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">CA 2</div>
+            <div class="meta">1 quarto ·
+              40 m² · <b>R$ 55,00/m²</b></div>
+            <div class="desl">🚗 2.6 km · R$ 103 de gasolina ·
+              <b>custo de vida R$ 2.303</b></div>
+            
+            <div class="cta">ver anúncio ↗</div>
+          </div></a><a class="card" href="https://www.dfimoveis.com.br/imovel/apartamento-2-quartos-aluguel-lago-norte-brasilia-df-via-varjao-do-torto-1185807" target="_blank" rel="noopener">
+          <div class="foto"><img src="https://img.dfimoveis.com.br/fotos/1185807/273c4d0774366d83019e4954a5266243.webp" alt="" loading="lazy"><span class="off">29% abaixo</span><span class="selo" style="background:#d03b3b">! atenção</span></div>
+          <div class="corpo">
+            <div class="preco">R$ 1.400<span>/mês</span></div>
+            <div class="cond">cond. não informado</div>
+            <div class="local">Localização não detalhada</div>
+            <div class="meta">2 quartos ·
+              30 m² · <b>R$ 46,67/m²</b></div>
+            <div class="desl">🚗 3.7 km · R$ 145 de gasolina ·
+              <b>custo de vida R$ 1.545</b></div>
+            <div class="obs">Está marcado como Lago Norte, mas o endereço é Via Varjão do Torto — o Varjão, região vizinha e bem diferente dos CAs. A foto mostra parede nua com fiação solta na tomada.</div>
+            <div class="cta">ver anúncio ↗</div>
+          </div></a></div>
+
+<p class="nota">Desconto grande costuma ter um motivo que o anúncio não conta — andar baixo, sem vaga,
+sem armários ou precisando de reforma. Use como <b>onde olhar primeiro</b>, não como veredito.
+Preços mudam e anúncios saem do ar: confirme no link.</p>
+</div></body></html>
