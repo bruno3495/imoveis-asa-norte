@@ -1,5 +1,45 @@
 {
- "vistos": [],
- "atualizado": "01/10/2026 09:30",
- "detalhe": []
+ "vistos": [
+  40111,
+  40100
+ ],
+ "atualizado": "07/10/2026 09:30",
+ "detalhe": [
+  {
+   "id": 40111,
+   "titulo": "LAKE SIDE BL F AP 205",
+   "url": "https://imoveisunb.unb.br/lake-side-bl-f-ap-205/",
+   "data": "2026-10-02",
+   "com_fila": false,
+   "preco": 3950.0,
+   "area": 53.0,
+   "quartos": 1,
+   "vagas": 1,
+   "condo": null,
+   "quadra": null,
+   "regiao": null,
+   "ref_m2": null,
+   "m2": 74.52830188679245,
+   "total": 3950.0,
+   "m2_total": 74.52830188679245
+  },
+  {
+   "id": 40100,
+   "titulo": "LAKE SIDE BL F AP 305",
+   "url": "https://imoveisunb.unb.br/lake-side-bl-f-ap-305/",
+   "data": "2026-10-02",
+   "com_fila": false,
+   "preco": 3950.0,
+   "area": 53.0,
+   "quartos": 1,
+   "vagas": 1,
+   "condo": null,
+   "quadra": null,
+   "regiao": null,
+   "ref_m2": null,
+   "m2": 74.52830188679245,
+   "total": 3950.0,
+   "m2_total": 74.52830188679245
+  }
+ ]
 }
