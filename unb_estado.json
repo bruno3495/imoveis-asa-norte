@@ -1,48 +1,10 @@
 {
  "vistos": [
-  41024,
-  41038,
   40100,
   40111
  ],
- "atualizado": "26/10/2026 09:30",
+ "atualizado": "28/10/2026 09:30",
  "detalhe": [
-  {
-   "id": 41024,
-   "titulo": "SQN 109 BL I AP 306",
-   "url": "https://imoveisunb.unb.br/sqn-109-bl-i-ap-306/",
-   "data": "2026-10-23",
-   "com_fila": true,
-   "preco": 3315.0,
-   "area": null,
-   "quartos": 2,
-   "vagas": 1,
-   "condo": 1100.0,
-   "quadra": "SQN 109",
-   "regiao": "asa-norte",
-   "ref_m2": 71.42857142857143,
-   "dist": 1.914097856358948,
-   "gas": 75.94987166203798,
-   "custo_vida": 3390.949871662038
-  },
-  {
-   "id": 41038,
-   "titulo": "SQN 109 BL J AP 411",
-   "url": "https://imoveisunb.unb.br/sqn-109-bl-j-ap-411/",
-   "data": "2026-10-23",
-   "com_fila": true,
-   "preco": 3330.0,
-   "area": null,
-   "quartos": 2,
-   "vagas": 1,
-   "condo": 640.0,
-   "quadra": "SQN 109",
-   "regiao": "asa-norte",
-   "ref_m2": 71.42857142857143,
-   "dist": 1.914097856358948,
-   "gas": 75.94987166203798,
-   "custo_vida": 3405.949871662038
-  },
   {
    "id": 40100,
    "titulo": "LAKE SIDE BL F AP 305",
